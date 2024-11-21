@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Col, Image, Row, Button} from 'react-bootstrap';
+import { Col, Image, Row, Button } from 'react-bootstrap';
 
 /** The Landing page. */
 const Home = () => (
