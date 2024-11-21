@@ -12,3 +12,10 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+input,
+textarea {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
