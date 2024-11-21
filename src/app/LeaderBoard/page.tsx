@@ -59,7 +59,9 @@ const Leaderboard = () => {
             </thead>
             <tbody>
               {leaderboardData.map((user, index) => (
-                <tr key={index}>
+                <tr key={user.name}>
+                  {' '}
+                  {/* Using name as the unique key */}
                   <td>{index + 1}</td>
                   <td>{user.name}</td>
                   <td>{user.points}</td>
