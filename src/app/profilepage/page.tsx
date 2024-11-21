@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import React from 'react';
 import Image from 'next/image';
 import '../../styles/profilepage.css';
@@ -33,6 +34,7 @@ interface ProfileData {
   sessionHistory: SessionHistory[];
 }
 
+// Default data for the profile
 const sampleProfileData: ProfileData = {
   name: 'John Foo',
   profilePicture: '/pfp1.png',
@@ -64,11 +66,9 @@ const sampleProfileData: ProfileData = {
   ],
 };
 
-export default function ProfilePage({
-  profileData = sampleProfileData,
-}: {
-  profileData?: ProfileData;
-}) {
+export default function ProfilePage() {
+  const profileData = sampleProfileData;
+
   return (
     <div className="container">
       {/* Profile Header */}
@@ -84,11 +84,7 @@ export default function ProfilePage({
           <h1 className="profile-name">{profileData.name}</h1>
           <div className="points-container">
             <StarIcon size={20} style={{ marginRight: '0.5rem' }} />
-            <span>
-              {profileData.points}
-              {' '}
-              Points
-            </span>
+            <span>{`${profileData.points} Points`}</span>
           </div>
         </div>
       </div>
@@ -106,10 +102,7 @@ export default function ProfilePage({
             <div key={course.id} className="progress-container">
               <div className="progress-label">
                 <span>{course.name}</span>
-                <span>
-                  {course.progress}
-                  %
-                </span>
+                <span>{`${course.progress}%`}</span>
               </div>
               <div className="progress-bar">
                 <div
@@ -131,11 +124,7 @@ export default function ProfilePage({
           {profileData.mentorCourses.map(course => (
             <div key={course.id} className="mentor-course-item">
               <span>{course.name}</span>
-              <span className="students-count">
-                {course.students}
-                {' '}
-                Students
-              </span>
+              <span className="students-count">{`${course.students} Students`}</span>
             </div>
           ))}
         </div>
