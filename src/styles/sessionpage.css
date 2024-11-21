@@ -1,0 +1,63 @@
+.session-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  justify-content: center;
+  justify-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 992px) {
+  .session-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .session-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.create-session-btn {
+  background-color: #b49cc8 !important;
+  color: white !important;
+  border: none;
+  border-radius: 25px;
+  height: 50px;
+  width: 250px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.create-session-btn:hover {
+  background-color: #9c7eb0 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25) !important;
+}
+
+.create-session-btn:focus,
+.create-session-btn:active {
+  outline: none;
+  background-color: #b49cc8 !important;
+  transform: translateY(0);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.search-input {
+  background-color: white;
+  border-color: rgba(180, 156, 200, 0.5);
+  border-radius: 25px;
+  height: 50px;
+  font-size: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .create-session-btn {
+    width: 100%;
+    margin-top: 15px;
+  }
+}
