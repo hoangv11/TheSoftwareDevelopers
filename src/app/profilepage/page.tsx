@@ -1,10 +1,10 @@
 import React from 'react';
-import  '../../styles/profilepage.css';
-import { 
-  Star as StarIcon, 
-  GraduationCap, 
-  Book, 
-  Clock 
+import '../../styles/profilepage.css';
+import {
+  Star as StarIcon,
+  GraduationCap,
+  Book,
+  Clock,
 } from 'lucide-react';
 
 // Define types for the data
@@ -32,53 +32,57 @@ interface ProfileData {
 }
 
 const sampleProfileData: ProfileData = {
-  name: "John Foo",
-  profilePicture: "/pfp1.png",
+  name: 'John Foo',
+  profilePicture: '/pfp1.png',
   points: 1250,
   studentCourses: [
-    { id: 1, name: "ICS 111 Introduction to Computer Science", progress: 75 },
-    { id: 2, name: "React Fundamentals", progress: 45 },
-    { id: 3, name: "Database Design", progress: 60 }
+    { id: 1, name: 'ICS 111 Introduction to Computer Science', progress: 75 },
+    { id: 2, name: 'React Fundamentals', progress: 45 },
+    { id: 3, name: 'Database Design', progress: 60 },
   ],
   mentorCourses: [
-    { id: 1, name: "Python Programming", students: 24 },
-    { id: 2, name: "JavaScript Basics", students: 18 }
+    { id: 1, name: 'Python Programming', students: 24 },
+    { id: 2, name: 'JavaScript Basics', students: 18 },
   ],
   sessionHistory: [
-    { 
-      date: "2024-03-15", 
-      course: "React Fundamentals", 
-      duration: "2h 15m", 
-      status: "Completed" 
+    {
+      date: '2024-03-15',
+      course: 'React Fundamentals',
+      duration: '2h 15m',
+      status: 'Completed',
     },
-    { 
-      date: "2024-03-10", 
-      course: "Database Design", 
-      duration: "1h 45m", 
-      status: "In Progress" 
-    }
-  ]
+    {
+      date: '2024-03-10',
+      course: 'Database Design',
+      duration: '1h 45m',
+      status: 'In Progress',
+    },
+  ],
 };
 
-export default function ProfilePage({ 
-  profileData = sampleProfileData 
-}: { 
-  profileData?: ProfileData 
+export default function ProfilePage({
+  profileData = sampleProfileData,
+}: {
+  profileData?: ProfileData
 }) {
   return (
     <div className="container">
       {/* Profile Header */}
       <div className="profile-header">
-        <img 
-          src={profileData.profilePicture} 
-          alt={`${profileData.name}'s profile`} 
+        <img
+          src={profileData.profilePicture}
+          alt={`${profileData.name}'s profile`}
           className="profile-picture"
         />
         <div>
           <h1 className="profile-name">{profileData.name}</h1>
           <div className="points-container">
             <StarIcon size={20} style={{ marginRight: '0.5rem' }} />
-            <span>{profileData.points} Points</span>
+            <span>
+              {profileData.points}
+              {' '}
+              Points
+            </span>
           </div>
         </div>
       </div>
@@ -88,19 +92,24 @@ export default function ProfilePage({
         {/* Student Courses */}
         <div className="course-card">
           <h2 className="course-title">
-            <GraduationCap className="course-icon" /> Student Courses
+            <GraduationCap className="course-icon" />
+            {' '}
+            Student Courses
           </h2>
           {profileData.studentCourses.map(course => (
             <div key={course.id} className="progress-container">
               <div className="progress-label">
                 <span>{course.name}</span>
-                <span>{course.progress}%</span>
+                <span>
+                  {course.progress}
+                  %
+                </span>
               </div>
               <div className="progress-bar">
-                <div 
-                  className="progress-bar-fill" 
+                <div
+                  className="progress-bar-fill"
                   style={{ width: `${course.progress}%` }}
-                ></div>
+                />
               </div>
             </div>
           ))}
@@ -109,13 +118,17 @@ export default function ProfilePage({
         {/* Mentor Courses */}
         <div className="course-card">
           <h2 className="course-title">
-            <Book className="course-icon" /> Mentor Courses
+            <Book className="course-icon" />
+            {' '}
+            Mentor Courses
           </h2>
           {profileData.mentorCourses.map(course => (
             <div key={course.id} className="mentor-course-item">
               <span>{course.name}</span>
               <span className="students-count">
-                {course.students} Students
+                {course.students}
+                {' '}
+                Students
               </span>
             </div>
           ))}
@@ -127,7 +140,7 @@ export default function ProfilePage({
         <thead>
           <tr>
             <th className="table-header">
-              <Clock style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} /> 
+              <Clock style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
               Session History
             </th>
           </tr>
@@ -140,11 +153,11 @@ export default function ProfilePage({
                   <span>{session.date}</span>
                   <span>{session.course}</span>
                   <span>{session.duration}</span>
-                  <span 
+                  <span
                     className={
-                      session.status === 'Completed' 
-                        ? "status-completed" 
-                        : "status-in-progress"
+                      session.status === 'Completed'
+                        ? 'status-completed'
+                        : 'status-in-progress'
                     }
                   >
                     {session.status}
