@@ -1,0 +1,154 @@
+.container {
+  font-family: Arial, sans-serif;
+  padding: 40px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.header p {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.formContainer {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.datePicker {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.datePicker .label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+.datePicker h3 {
+  margin-bottom: 8px;
+}
+
+.datePicker input {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.timeInputs {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.timeInput {
+  width: 48%;
+}
+
+.timeInput label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+.timeInput input {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.inputFieldContainer {
+  margin-bottom: 20px;
+}
+
+.inputFieldContainer label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+.inputField {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.textAreaField {
+  margin-bottom: 20px;
+}
+
+.textAreaField label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+.descriptionTextarea {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  resize: vertical;
+}
+
+.footer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  max-width: 600px;
+  margin: 30px auto;
+}
+
+.backButton,
+.submitButton {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.backButton {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.backButton:hover {
+  background-color: #5a6268;
+}
+
+.submitButton {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.submitButton:hover {
+  background-color: #0056b3;
+}
