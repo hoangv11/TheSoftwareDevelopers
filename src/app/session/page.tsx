@@ -21,17 +21,17 @@ export default function SessionPage() {
 
   const handleSubmit = () => {
     if (new Date(`1970-01-01T${endTime}:00Z`) <= new Date(`1970-01-01T${startTime}:00Z`)) {
-      alert('End time must be after the start time!');
+      alert('End time must be after the start time!'); // eslint-disable-line no-alert
       return;
     }
 
     console.log('Session Details:', { startDate, location, description, startTime, endTime });
-    alert('Session created successfully!');
+    alert('Session created successfully!'); // eslint-disable-line no-alert
   };
 
   const handleBack = () => {
     console.log('Back button clicked');
-    alert('Going back to the previous page!');
+    alert('Going back to the previous page!'); // eslint-disable-line no-alert
   };
 
   return (
