@@ -5,13 +5,13 @@ const Footer = () => (
   <footer className="mt-auto py-3 bg-light">
     <Container>
       <Col className="text-center">
-        Department of Information and Computer Sciences
+        The Software Developers
         <br />
         University of Hawaii
         <br />
         Honolulu, HI 96822
         <br />
-        <a href="http://ics-software-engineering.github.io/nextjs-application-template">Template Home Page</a>
+        <a href="https://thesoftwaredevelopers.github.io/">Project Page</a>
       </Col>
     </Container>
   </footer>
