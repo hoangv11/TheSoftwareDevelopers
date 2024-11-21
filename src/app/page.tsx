@@ -1,20 +1,28 @@
-import { Col, Container, Image, Row } from 'react-bootstrap';
+/* eslint-disable max-len */
+import { Col, Image, Row } from 'react-bootstrap';
 
-/** The Home page. */
+/** The Landing page. */
 const Home = () => (
-  <main>
-    <Container id="landing-page" fluid className="py-3">
-      <Row className="align-middle text-center">
-        <Col xs={4}>
-          <Image src="next.svg" width="150px" alt="" />
-        </Col>
+  <main id="landing-page" className="vh-100 d-flex">
+    <Row className="w-100 m-0">
+      {/* Text Section */}
+      <Col xs={6} className="d-flex flex-column justify-content-center align-items-start p-5">
+        <h1>ICStudy</h1>
+        <p>
+          Placeholder
+        </p>
+      </Col>
 
-        <Col xs={8} className="d-flex flex-column justify-content-center">
-          <h1>Welcome to this template</h1>
-          <p>Now get to work and modify this app!</p>
-        </Col>
-      </Row>
-    </Container>
+      {/* Image Section */}
+      <Col xs={6} className="d-flex justify-content-center align-items-center p-5">
+        <Image
+          src="https://via.placeholder.com/600x400"
+          alt="Home Image"
+          className="w-100 h-auto"
+          style={{ maxHeight: '100%' }}
+        />
+      </Col>
+    </Row>
   </main>
 );
 
