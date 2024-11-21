@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import '../../styles/profilepage.css';
 import {
   Star as StarIcon,
@@ -16,6 +17,7 @@ interface Course {
 }
 
 interface SessionHistory {
+  id: number; // Add a unique ID for session history
   date: string;
   course: string;
   duration: string;
@@ -46,12 +48,14 @@ const sampleProfileData: ProfileData = {
   ],
   sessionHistory: [
     {
+      id: 1,
       date: '2024-03-15',
       course: 'React Fundamentals',
       duration: '2h 15m',
       status: 'Completed',
     },
     {
+      id: 2,
       date: '2024-03-10',
       course: 'Database Design',
       duration: '1h 45m',
@@ -63,16 +67,18 @@ const sampleProfileData: ProfileData = {
 export default function ProfilePage({
   profileData = sampleProfileData,
 }: {
-  profileData?: ProfileData
+  profileData?: ProfileData;
 }) {
   return (
     <div className="container">
       {/* Profile Header */}
       <div className="profile-header">
-        <img
+        <Image
           src={profileData.profilePicture}
           alt={`${profileData.name}'s profile`}
           className="profile-picture"
+          width={100} // Adjust dimensions as needed
+          height={100}
         />
         <div>
           <h1 className="profile-name">{profileData.name}</h1>
@@ -146,8 +152,8 @@ export default function ProfilePage({
           </tr>
         </thead>
         <tbody>
-          {profileData.sessionHistory.map((session, index) => (
-            <tr key={index} className="table-row">
+          {profileData.sessionHistory.map(session => (
+            <tr key={session.id} className="table-row">
               <td className="table-cell">
                 <div className="session-row">
                   <span>{session.date}</span>
