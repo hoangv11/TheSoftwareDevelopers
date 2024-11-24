@@ -1,6 +1,6 @@
 'use server';
 
-import { Stuff, Condition } from '@prisma/client';
+import { Stuff, Condition, Profile } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { redirect } from 'next/navigation';
 import { prisma } from './prisma';
@@ -9,7 +9,12 @@ import { prisma } from './prisma';
  * Adds a new stuff to the database.
  * @param stuff, an object with the following properties: name, quantity, owner, condition.
  */
-export async function addStuff(stuff: { name: string; quantity: number; owner: string; condition: string }) {
+export async function addStuff(stuff: {
+  name: string;
+  quantity: number;
+  owner: string;
+  condition: string;
+}) {
   // console.log(`addStuff data: ${JSON.stringify(stuff, null, 2)}`);
   let condition: Condition = 'good';
   if (stuff.condition === 'poor') {
@@ -67,7 +72,10 @@ export async function deleteStuff(id: number) {
  * Creates a new user in the database.
  * @param credentials, an object with the following properties: email, password.
  */
-export async function createUser(credentials: { email: string; password: string }) {
+export async function createUser(credentials: {
+  email: string;
+  password: string;
+}) {
   // console.log(`createUser data: ${JSON.stringify(credentials, null, 2)}`);
   const password = await hash(credentials.password, 10);
   await prisma.user.create({
@@ -82,7 +90,10 @@ export async function createUser(credentials: { email: string; password: string 
  * Changes the password of an existing user in the database.
  * @param credentials, an object with the following properties: email, password.
  */
-export async function changePassword(credentials: { email: string; password: string }) {
+export async function changePassword(credentials: {
+  email: string;
+  password: string;
+}) {
   // console.log(`changePassword data: ${JSON.stringify(credentials, null, 2)}`);
   const password = await hash(credentials.password, 10);
   await prisma.user.update({
@@ -91,4 +102,33 @@ export async function changePassword(credentials: { email: string; password: str
       password,
     },
   });
+}
+
+export async function createProfile(profile: Profile) {
+  // Check if a profile with the given userId exists
+  const existingProfile = await prisma.profile.findUnique({
+    where: { userId: profile.userId },
+  });
+
+  if (existingProfile) {
+    // If profile exists, update it
+    await prisma.profile.update({
+      where: { userId: profile.userId },
+      data: {
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+      },
+    });
+  } else {
+    // If profile does not exist, create a new one
+    await prisma.profile.create({
+      data: {
+        userId: profile.userId,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+      },
+    });
+  }
+
+  return redirect('/profile');
 }

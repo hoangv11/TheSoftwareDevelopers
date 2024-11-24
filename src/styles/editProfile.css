@@ -1,0 +1,123 @@
+.createSessionTitle {
+  padding-bottom: 30px; /* Reduced from 50px */
+  color: black;
+  text-align: center;
+}
+
+.thebox {
+  border-radius: 20px;
+  background-color: white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border: none;
+  padding: 30px;
+  margin-bottom: 30px;
+}
+
+/* Improved form styling */
+.form-control {
+  border-radius: 10px;
+  border: 2px solid #e8e8e8;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+}
+
+.form-control:focus {
+  border-color: #7cfbdf;
+  box-shadow: 0 0 0 3px rgba(124, 251, 223, 0.25);
+  background-color: white;
+}
+
+.form-control::placeholder {
+  color: #adb5bd;
+}
+
+textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Enhanced button styles */
+.cSbutton {
+  background-color: #7cfbdf;
+  color: black;
+  font-weight: 600;
+  padding: 12px 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  border: none;
+  width: 200px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(124, 251, 223, 0.5);
+  transition: all 0.3s ease;
+}
+
+.cSbutton:hover,
+.cSbutton:focus,
+.cSbutton:active {
+  background-color: #0cc89f;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(12, 200, 159, 0.5);
+}
+
+/* Improved profile image styling */
+.profile-image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.profile-image {
+  padding-top: 0; /* Removed the 100px padding */
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #f8f9fa;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  border: 3px solid #e8e8e8;
+  transition: all 0.3s ease;
+}
+
+.profile-image:hover {
+  border-color: #7cfbdf;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.add-icon-circle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  background-color: #7cfbdf;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(124, 251, 223, 0.5);
+  transition: all 0.3s ease;
+}
+
+.add-icon {
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+}
+
+.add-icon-circle:hover {
+  background-color: #0cc89f;
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(12, 200, 159, 0.5);
+}
+
+/* Add spacing between form rows */
+.row {
+  margin-bottom: 10px;
+}
