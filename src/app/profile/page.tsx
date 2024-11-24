@@ -5,7 +5,7 @@ import React from 'react';
 import Image from 'next/image';
 import '../../styles/profilepage.css';
 import { Star as StarIcon, GraduationCap, Book, Clock } from 'lucide-react';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+import authOptions from '@/lib/auth';
 
 const myProfile = async () => {
   const session = await getServerSession(authOptions);
