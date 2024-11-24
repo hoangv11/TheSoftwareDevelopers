@@ -12,12 +12,34 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-  role     Role   @default(USER)
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  profile   Profile?
+  session   Session[]
+}
+
+model Profile { 
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  title     String
+  desc      String
+  location  String
+  startTime DateTime  
+  endTime   DateTime
+  sensei    String
+  courseId  String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Stuff {
