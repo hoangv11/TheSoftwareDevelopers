@@ -1,6 +1,6 @@
 /* eslint-disable arrow-body-style */
 import { compare } from 'bcrypt';
-import NextAuth, { type NextAuthOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
 
@@ -51,13 +51,9 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/auth/signin',
     signOut: '/auth/signout',
-    //   error: '/auth/error',
-    //   verifyRequest: '/auth/verify-request',
-    //   newUser: '/auth/new-user'
   },
   callbacks: {
     session: ({ session, token }) => {
-      // console.log('Session Callback', { session, token })
       return {
         ...session,
         user: {
@@ -68,7 +64,6 @@ export const authOptions: NextAuthOptions = {
       };
     },
     jwt: ({ token, user }) => {
-      // console.log('JWT Callback', { token, user })
       if (user) {
         const u = user as unknown as any;
         return {
@@ -82,5 +77,6 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
+// Exporting as default for NextAuth
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
