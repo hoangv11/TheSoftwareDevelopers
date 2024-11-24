@@ -12,7 +12,7 @@ import { EditProfileSchema } from '@/lib/validationSchemas';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 const onSubmit = async (
-  data: { firstName: string; lastName: string },
+  data: { firstName: string; lastName: string; major: string; bio: string },
   session: any,
 ) => {
   // console.log(`onSubmit data: ${JSON.stringify(data, null, 2)}`);
@@ -78,6 +78,34 @@ const EditProfile: React.FC = () => {
                           className="form-control"
                           {...register('lastName')}
                           placeholder="Last Name"
+                        />
+                        <div className="invalid-feedback" />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <Form.Group controlId="formMajor">
+                        <Form.Label />
+                        <input
+                          type="text"
+                          className="form-control"
+                          {...register('major')}
+                          placeholder="Major"
+                        />
+                        <div className="invalid-feedback" />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <Form.Group controlId="formBio">
+                        <Form.Label />
+                        <input
+                          type="text"
+                          className="form-control"
+                          {...register('bio')}
+                          placeholder="Bio"
                         />
                         <div className="invalid-feedback" />
                       </Form.Group>

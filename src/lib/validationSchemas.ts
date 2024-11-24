@@ -22,4 +22,6 @@ export const EditStuffSchema = Yup.object({
 export const EditProfileSchema = Yup.object({
   firstName: Yup.string().required(),
   lastName: Yup.string().required(),
+  major: Yup.string().required(),
+  bio: Yup.string().required(),
 });

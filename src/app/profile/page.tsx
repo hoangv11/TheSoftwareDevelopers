@@ -1,85 +1,52 @@
-/* eslint-disable no-alert */
+import { Profile } from '@prisma/client';
+import { getServerSession } from 'next-auth';
+import { prisma } from '@/lib/prisma';
 import React from 'react';
 import Image from 'next/image';
 import '../../styles/profilepage.css';
 import { Star as StarIcon, GraduationCap, Book, Clock } from 'lucide-react';
+import { authOptions } from '../api/auth/[...nextauth]/route';
 
-// Define types for the data
-interface Course {
-  id: number;
-  name: string;
-  progress?: number;
-  students?: number;
-}
+const myProfile = async () => {
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user || !session.user.email) {
+    return <div>Session not found</div>;
+  }
+  const userSession = session as unknown as {
+    user: { email: string; id: string; randomKey: string };
+  };
 
-interface SessionHistory {
-  id: number; // Add a unique ID for session history
-  date: string;
-  course: string;
-  duration: string;
-  status: 'Completed' | 'In Progress';
-}
-
-interface ProfileData {
-  name: string;
-  profilePicture: string;
-  points: number;
-  studentCourses: Course[];
-  mentorCourses: Course[];
-  sessionHistory: SessionHistory[];
-}
-
-// Default data for the profile
-const sampleProfileData: ProfileData = {
-  name: 'John Foo',
-  profilePicture: '/pfp1.png',
-  points: 1250,
-  studentCourses: [
-    { id: 1, name: 'ICS 111 Introduction to Computer Science', progress: 75 },
-    { id: 2, name: 'React Fundamentals', progress: 45 },
-    { id: 3, name: 'Database Design', progress: 60 },
-  ],
-  mentorCourses: [
-    { id: 1, name: 'Python Programming', students: 24 },
-    { id: 2, name: 'JavaScript Basics', students: 18 },
-  ],
-  sessionHistory: [
-    {
-      id: 1,
-      date: '2024-03-15',
-      course: 'React Fundamentals',
-      duration: '2h 15m',
-      status: 'Completed',
-    },
-    {
-      id: 2,
-      date: '2024-03-10',
-      course: 'Database Design',
-      duration: '1h 45m',
-      status: 'In Progress',
-    },
-  ],
-};
-
-export default function ProfilePage() {
-  const profileData = sampleProfileData;
+  const profiles: Profile[] = await prisma.profile.findMany({});
 
   return (
     <div className="container">
       {/* Profile Header */}
       <div className="profile-header">
         <Image
-          src={profileData.profilePicture}
-          alt={`${profileData.name}'s profile`}
+          src="/pfp1.png"
+          alt="profile picture"
           className="profile-picture"
-          width={100} // Adjust dimensions as needed
+          width={100}
           height={100}
         />
         <div>
-          <h1 className="profile-name">{profileData.name}</h1>
+          <h1 className="profile-name">
+            {' '}
+            {profiles
+              .filter(
+                (profile) => profile.userId === parseInt(userSession.user?.id, 10),
+              )
+              .map((profile) => (
+                <div key={profile.userId}>
+                  <h5>{`${profile.firstName} ${profile.lastName}`}</h5>
+                  <h5>{`${profile.major}`}</h5>
+                  <h5>{`${profile.bio}`}</h5>
+                </div>
+              ))}
+          </h1>
           <div className="points-container">
             <StarIcon size={20} style={{ marginRight: '0.5rem' }} />
-            <span>{`${profileData.points} Points`}</span>
+            <span>1250 Points</span>
           </div>
         </div>
       </div>
@@ -92,20 +59,33 @@ export default function ProfilePage() {
             <GraduationCap className="course-icon" />
             Student Courses
           </h2>
-          {profileData.studentCourses.map((course) => (
-            <div key={course.id} className="progress-container">
-              <div className="progress-label">
-                <span>{course.name}</span>
-                <span>{`${course.progress}%`}</span>
-              </div>
-              <div className="progress-bar">
-                <div
-                  className="progress-bar-fill"
-                  style={{ width: `${course.progress}%` }}
-                />
-              </div>
+          <div className="progress-container">
+            <div className="progress-label">
+              <span>ICS 111 Introduction to Computer Science</span>
+              <span>75%</span>
             </div>
-          ))}
+            <div className="progress-bar">
+              <div className="progress-bar-fill" style={{ width: '75%' }} />
+            </div>
+          </div>
+          <div className="progress-container">
+            <div className="progress-label">
+              <span>React Fundamentals</span>
+              <span>45%</span>
+            </div>
+            <div className="progress-bar">
+              <div className="progress-bar-fill" style={{ width: '45%' }} />
+            </div>
+          </div>
+          <div className="progress-container">
+            <div className="progress-label">
+              <span>Database Design</span>
+              <span>60%</span>
+            </div>
+            <div className="progress-bar">
+              <div className="progress-bar-fill" style={{ width: '60%' }} />
+            </div>
+          </div>
         </div>
 
         {/* Mentor Courses */}
@@ -114,12 +94,14 @@ export default function ProfilePage() {
             <Book className="course-icon" />
             Mentor Courses
           </h2>
-          {profileData.mentorCourses.map((course) => (
-            <div key={course.id} className="mentor-course-item">
-              <span>{course.name}</span>
-              <span className="students-count">{`${course.students} Students`}</span>
-            </div>
-          ))}
+          <div className="mentor-course-item">
+            <span>Python Programming</span>
+            <span className="students-count">24 Students</span>
+          </div>
+          <div className="mentor-course-item">
+            <span>JavaScript Basics</span>
+            <span className="students-count">18 Students</span>
+          </div>
         </div>
       </div>
 
@@ -136,28 +118,30 @@ export default function ProfilePage() {
           </tr>
         </thead>
         <tbody>
-          {profileData.sessionHistory.map((session) => (
-            <tr key={session.id} className="table-row">
-              <td className="table-cell">
-                <div className="session-row">
-                  <span>{session.date}</span>
-                  <span>{session.course}</span>
-                  <span>{session.duration}</span>
-                  <span
-                    className={
-                      session.status === 'Completed'
-                        ? 'status-completed'
-                        : 'status-in-progress'
-                    }
-                  >
-                    {session.status}
-                  </span>
-                </div>
-              </td>
-            </tr>
-          ))}
+          <tr className="table-row">
+            <td className="table-cell">
+              <div className="session-row">
+                <span>2024-03-15</span>
+                <span>React Fundamentals</span>
+                <span>2h 15m</span>
+                <span className="status-completed">Completed</span>
+              </div>
+            </td>
+          </tr>
+          <tr className="table-row">
+            <td className="table-cell">
+              <div className="session-row">
+                <span>2024-03-10</span>
+                <span>Database Design</span>
+                <span>1h 45m</span>
+                <span className="status-in-progress">In Progress</span>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
   );
-}
+};
+
+export default myProfile;
