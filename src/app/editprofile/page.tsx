@@ -1,3 +1,5 @@
+'use client';
+
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 import '../../styles/editProfile.css';
 import swal from 'sweetalert';

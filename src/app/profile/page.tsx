@@ -2,12 +2,7 @@
 import React from 'react';
 import Image from 'next/image';
 import '../../styles/profilepage.css';
-import {
-  Star as StarIcon,
-  GraduationCap,
-  Book,
-  Clock,
-} from 'lucide-react';
+import { Star as StarIcon, GraduationCap, Book, Clock } from 'lucide-react';
 
 // Define types for the data
 interface Course {
@@ -95,10 +90,9 @@ export default function ProfilePage() {
         <div className="course-card">
           <h2 className="course-title">
             <GraduationCap className="course-icon" />
-            {' '}
             Student Courses
           </h2>
-          {profileData.studentCourses.map(course => (
+          {profileData.studentCourses.map((course) => (
             <div key={course.id} className="progress-container">
               <div className="progress-label">
                 <span>{course.name}</span>
@@ -118,10 +112,9 @@ export default function ProfilePage() {
         <div className="course-card">
           <h2 className="course-title">
             <Book className="course-icon" />
-            {' '}
             Mentor Courses
           </h2>
-          {profileData.mentorCourses.map(course => (
+          {profileData.mentorCourses.map((course) => (
             <div key={course.id} className="mentor-course-item">
               <span>{course.name}</span>
               <span className="students-count">{`${course.students} Students`}</span>
@@ -135,13 +128,15 @@ export default function ProfilePage() {
         <thead>
           <tr>
             <th className="table-header">
-              <Clock style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />
+              <Clock
+                style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}
+              />
               Session History
             </th>
           </tr>
         </thead>
         <tbody>
-          {profileData.sessionHistory.map(session => (
+          {profileData.sessionHistory.map((session) => (
             <tr key={session.id} className="table-row">
               <td className="table-cell">
                 <div className="session-row">
