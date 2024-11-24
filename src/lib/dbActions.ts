@@ -117,6 +117,8 @@ export async function createProfile(profile: Profile) {
       data: {
         firstName: profile.firstName,
         lastName: profile.lastName,
+        major: profile.major,
+        bio: profile.bio,
       },
     });
   } else {
