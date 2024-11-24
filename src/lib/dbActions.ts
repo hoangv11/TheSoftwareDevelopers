@@ -104,14 +104,31 @@ export async function changePassword(credentials: {
   });
 }
 
-export async function editProfile(profiles: Profile) {
-  await prisma.profile.update({
-    where: { id: profiles.id },
-    data: {
-      firstName: profiles.firstName,
-      lastName: profiles.lastName,
-    },
+export async function createProfile(profile: Profile) {
+  // Check if a profile with the given userId exists
+  const existingProfile = await prisma.profile.findUnique({
+    where: { userId: profile.userId },
   });
-  // After updating, redirect to the profile page
-  redirect('/profile');
+
+  if (existingProfile) {
+    // If profile exists, update it
+    await prisma.profile.update({
+      where: { userId: profile.userId },
+      data: {
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+      },
+    });
+  } else {
+    // If profile does not exist, create a new one
+    await prisma.profile.create({
+      data: {
+        userId: profile.userId,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+      },
+    });
+  }
+
+  return redirect('/profile');
 }

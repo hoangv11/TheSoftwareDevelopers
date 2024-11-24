@@ -18,3 +18,8 @@ export const EditStuffSchema = Yup.object({
     .required(),
   owner: Yup.string().required(),
 });
+
+export const EditProfileSchema = Yup.object({
+  firstName: Yup.string().required(),
+  lastName: Yup.string().required(),
+});
