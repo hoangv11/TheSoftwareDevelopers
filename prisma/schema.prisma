@@ -12,13 +12,13 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  email    String    @unique
-  password String
-  role     Role      @default(USER)
-  bType    BuddyRole @default(GRASSHOPPER)
-  profile  Profile?
-  session  Session[] @relation("UserSessions")
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  password     String
+  role         Role           @default(USER)
+  userrole     UserRole       @default(GRASSHOPPER)
+  profile      Profile?
+  studysession StudySession[] @relation("UserSessions")
 }
 
 model Profile {
@@ -31,17 +31,11 @@ model Profile {
   user      User   @relation(fields: [userId], references: [id])
 }
 
-model Session {
-  id        Int      @id @default(autoincrement())
-  title     String
-  desc      String
-  location  String
-  startTime DateTime
-  endTime   DateTime
-  sensei    String
-  courseId  String
-  accepted  Boolean  @default(false)
-  user      User[]   @relation("UserSessions")
+model StudySession {
+  id       Int     @id @default(autoincrement())
+  title    String
+  accepted Boolean @default(false)
+  user     User[]  @relation("UserSessions")
 }
 
 model Stuff {
@@ -52,7 +46,7 @@ model Stuff {
   owner     String
 }
 
-enum BuddyRole {
+enum UserRole {
   SENSEI
   GRASSHOPPER
 }
