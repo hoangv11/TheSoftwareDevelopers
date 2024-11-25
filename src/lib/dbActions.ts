@@ -152,5 +152,16 @@ export async function createSession(studySession: StudySession) {
     },
   });
 
-  return redirect('/sessionspage');
+  return redirect('/mysessions');
+}
+
+export async function updateSession(studySessionId: number, userId: number) {
+  await prisma.studySession.update({
+    where: { id: studySessionId },
+    data: {
+      user: {
+        connect: { id: userId },
+      },
+    },
+  });
 }

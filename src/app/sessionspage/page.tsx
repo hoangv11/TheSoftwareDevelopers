@@ -21,6 +21,12 @@ const SessionsPage = async () => {
     return <div>Session not found</div>;
   }
 
+  const userSession = session as unknown as {
+    user: { email: string; id: string; randomKey: string };
+  };
+
+  const currentUser = parseInt(userSession?.user?.id, 10);
+
   const sessions: ExtendedStudySession[] = (await prisma.studySession.findMany({
     include: {
       owner: {
@@ -61,7 +67,7 @@ const SessionsPage = async () => {
         </Row>
 
         <div className="session-card-grid">
-          <SessionCard sessions={sessions} />
+          <SessionCard sessions={sessions} currentUser={currentUser} />
         </div>
       </Container>
     </main>
