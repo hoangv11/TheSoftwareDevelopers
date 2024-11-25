@@ -19,8 +19,13 @@ const onSubmit = async (
   session: any,
 ) => {
   // console.log(`onSubmit data: ${JSON.stringify(data, null, 2)}`);
-  const currentUser = parseInt(session?.user?.id, 10);
-  await createSession({ ...data, accepted: true, id: currentUser });
+  const userId = parseInt(session?.user?.id, 10);
+  await createSession({
+    ...data,
+    accepted: true,
+    userId,
+    id: userId,
+  });
 
   swal('Success', 'created session', 'success', {
     timer: 1000,

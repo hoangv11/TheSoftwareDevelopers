@@ -143,6 +143,7 @@ export async function createSession(studySession: StudySession) {
   // If session does not exist, create a new one
   await prisma.studySession.create({
     data: {
+      userId: studySession.userId,
       title: studySession.title,
       accepted: studySession.accepted,
     },

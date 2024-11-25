@@ -4,7 +4,16 @@ import { StudySession } from '@prisma/client';
 import { Card, Button } from 'react-bootstrap';
 import '../styles/sessioncards.css';
 
-const SessionCard = ({ sessions }: { sessions: StudySession[] }) => (
+type ExtendedStudySession = StudySession & {
+  owner: {
+    profile?: {
+      firstName: string;
+      lastName: string;
+    };
+  };
+};
+
+const SessionCard = ({ sessions }: { sessions: ExtendedStudySession[] }) => (
   <div className="sessionCard">
     {sessions.map((session) => (
       <div className="sessionCardBorder" style={{ backgroundColor: '#e6f3ff' }}>
@@ -20,7 +29,9 @@ const SessionCard = ({ sessions }: { sessions: StudySession[] }) => (
             <div className="session-details pt-3">
               <div className="detail-row pb-3">
                 <span className="detail-label">Sensei: </span>
-                <span className="detail-value">Sensei Name</span>
+                <span className="detail-value">
+                  {`${session.owner?.profile?.firstName} ${session.owner?.profile?.lastName}`}
+                </span>
               </div>
               <div className="detail-row pb-3">
                 <span className="detail-label">Course: </span>
@@ -36,7 +47,7 @@ const SessionCard = ({ sessions }: { sessions: StudySession[] }) => (
               </div>
             </div>
 
-            <Button className="requestBtn mt-3">Request Session</Button>
+            <Button className="requestBtn mt-3">Add Session</Button>
           </Card.Body>
         </Card>
       </div>

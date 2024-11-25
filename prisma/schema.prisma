@@ -20,6 +20,7 @@ model User {
   profile      Profile?
   studysession StudySession[] @relation("UserSessions")
   StudySession StudySession[]
+  mySessions   mySessions[]
 }
 
 model Profile {
@@ -32,13 +33,23 @@ model Profile {
   user      User   @relation(fields: [userId], references: [id])
 }
 
+model mySessions {
+  id             Int          @id @default(autoincrement())
+  userId         Int
+  mySessionId    Int
+  user           User         @relation(fields: [userId], references: [id])
+  studySession   StudySession @relation(fields: [studySessionId], references: [id])
+  studySessionId Int
+}
+
 model StudySession {
-  id       Int     @id @default(autoincrement())
-  title    String
-  accepted Boolean @default(false)
-  user     User[]  @relation("UserSessions")
-  userId   Int
-  owner    User    @relation(fields: [userId], references: [id])
+  id         Int          @id @default(autoincrement())
+  title      String
+  accepted   Boolean      @default(false)
+  user       User[]       @relation("UserSessions")
+  userId     Int
+  owner      User         @relation(fields: [userId], references: [id])
+  mySessions mySessions[]
 }
 
 model Stuff {

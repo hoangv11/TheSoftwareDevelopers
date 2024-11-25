@@ -1,10 +1,19 @@
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { getServerSession } from 'next-auth';
+import { StudySession } from '@prisma/client';
 import authOptions from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import SessionCard from '../../components/SessionCards';
-
 import '../../styles/sessionpage.css';
+
+type ExtendedStudySession = StudySession & {
+  owner: {
+    profile?: {
+      firstName: string;
+      lastName: string;
+    };
+  };
+};
 
 const SessionsPage = async () => {
   const session = await getServerSession(authOptions);
@@ -12,7 +21,15 @@ const SessionsPage = async () => {
     return <div>Session not found</div>;
   }
 
-  const sessions = await prisma.studySession.findMany({});
+  const sessions: ExtendedStudySession[] = (await prisma.studySession.findMany({
+    include: {
+      owner: {
+        include: {
+          profile: true,
+        },
+      },
+    },
+  })) as ExtendedStudySession[];
 
   return (
     <main>
