@@ -18,9 +18,8 @@ model User {
   role         Role           @default(USER)
   userrole     UserRole       @default(GRASSHOPPER)
   profile      Profile?
+  StudySession StudySession[] @relation("CreatedSessions")
   studysession StudySession[] @relation("UserSessions")
-  StudySession StudySession[]
-  mySessions   mySessions[]
 }
 
 model Profile {
@@ -33,24 +32,24 @@ model Profile {
   user      User   @relation(fields: [userId], references: [id])
 }
 
-model mySessions {
-  id             Int          @id @default(autoincrement())
-  userId         Int
-  mySessionId    Int
-  user           User         @relation(fields: [userId], references: [id])
-  studySession   StudySession @relation(fields: [studySessionId], references: [id])
-  studySessionId Int
+model StudySession {
+  id     Int     @id @default(autoincrement())
+  title  String
+  added  Boolean @default(false)
+  user   User[]  @relation("UserSessions")
+  userId Int
+  owner  User    @relation("CreatedSessions", fields: [userId], references: [id])
 }
 
-model StudySession {
-  id         Int          @id @default(autoincrement())
-  title      String
-  accepted   Boolean      @default(false)
-  user       User[]       @relation("UserSessions")
-  userId     Int
-  owner      User         @relation(fields: [userId], references: [id])
-  mySessions mySessions[]
-}
+// model MySession {
+//   id             Int          @id @default(autoincrement())
+//   userId         Int
+//   user           User         @relation(fields: [userId], references: [id])
+//   StudySession   StudySession @relation(fields: [studySessionId], references: [id])
+//   studySessionId Int
+
+//   @@unique([userId, studySessionId])
+// }
 
 model Stuff {
   id        Int       @id @default(autoincrement())
