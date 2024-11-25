@@ -1,26 +1,44 @@
 'use client';
 
+import { Form, Button } from 'react-bootstrap';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { createSession } from '@/lib/dbActions';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { CreateSessionSchema } from '@/lib/validationSchemas';
+import swal from 'sweetalert';
 import 'react-datepicker/dist/react-datepicker.css';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from '../../styles/sessionpage.module.css';
 
-export default function SessionPage() {
-  const handleSubmit = () => {
-    const title = (document.getElementById('title') as HTMLInputElement).value;
-    const location = (document.getElementById('location') as HTMLInputElement)
-      .value;
-    const description = (
-      document.getElementById('description') as HTMLTextAreaElement
-    ).value;
+const onSubmit = async (
+  data: {
+    title: string;
+  },
+  session: any,
+) => {
+  // console.log(`onSubmit data: ${JSON.stringify(data, null, 2)}`);
+  const currentUser = parseInt(session?.user?.id, 10);
+  await createSession({ ...data, accepted: true, id: currentUser });
 
-    // You can handle validation and form submission logic here
-    console.log('Session Details:', { title, location, description });
-    alert('Session created successfully!'); // eslint-disable-line no-alert
-  };
+  swal('Success', 'created session', 'success', {
+    timer: 1000,
+  });
+};
 
-  const handleBack = () => {
-    console.log('Back button clicked');
-    alert('Going back to the previous page!'); // eslint-disable-line no-alert
-  };
+const CreateSession: React.FC = () => {
+  const { data: session, status } = useSession();
+  // console.log('AddStuffForm', status, session);
+  const { register, handleSubmit } = useForm({
+    resolver: yupResolver(CreateSessionSchema),
+  });
+  if (status === 'loading') {
+    return <LoadingSpinner />;
+  }
+  if (status === 'unauthenticated') {
+    redirect('/auth/signin');
+  }
 
   return (
     <main className={styles.container}>
@@ -40,27 +58,38 @@ export default function SessionPage() {
             type="text"
             placeholder="Enter session title"
             className={styles.inputField}
+            {...register('title')}
           />
         </div>
       </section>
 
-      {/* Buttons */}
+      {/* Form with Buttons */}
       <footer className={styles.footer}>
-        <button
-          type="button"
-          className={styles.backButton}
-          onClick={handleBack}
-        >
-          Back
-        </button>
-        <button
-          type="button"
-          className={styles.submitButton}
-          onClick={handleSubmit}
-        >
-          Submit
-        </button>
+        <Form onSubmit={handleSubmit((data) => onSubmit(data, session))}>
+          <div className="d-flex justify-content-between">
+            <Button
+              type="button"
+              variant="secondary"
+              className={styles.backButton}
+              onClick={() => {
+                console.log('Back button clicked');
+                // Handle back action
+              }}
+            >
+              Back
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              className={styles.submitButton}
+            >
+              Submit
+            </Button>
+          </div>
+        </Form>
       </footer>
     </main>
   );
-}
+};
+
+export default CreateSession;
