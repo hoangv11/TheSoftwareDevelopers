@@ -22,7 +22,7 @@ const onSubmit = async (
   const userId = parseInt(session?.user?.id, 10);
   await createSession({
     ...data,
-    accepted: true,
+    added: true,
     userId,
     id: userId,
   });

@@ -145,7 +145,10 @@ export async function createSession(studySession: StudySession) {
     data: {
       userId: studySession.userId,
       title: studySession.title,
-      accepted: studySession.accepted,
+      added: studySession.added,
+      user: {
+        connect: { id: studySession.userId },
+      },
     },
   });
 

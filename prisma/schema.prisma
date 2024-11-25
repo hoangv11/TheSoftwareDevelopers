@@ -18,8 +18,8 @@ model User {
   role         Role           @default(USER)
   userrole     UserRole       @default(GRASSHOPPER)
   profile      Profile?
-  StudySession StudySession[] @relation("CreatedSessions")
-  studysession StudySession[] @relation("UserSessions")
+  StudySession StudySession[] @relation("CreatedSessions") //Public Sessions
+  studysession StudySession[] @relation("UserSessions") //User Sessions
 }
 
 model Profile {

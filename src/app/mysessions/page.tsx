@@ -21,6 +21,10 @@ const SessionsPage = async () => {
     return <div>Session not found</div>;
   }
 
+  const userSession = session as unknown as {
+    user: { email: string; id: string; randomKey: string };
+  };
+
   const sessions: ExtendedStudySession[] = (await prisma.studySession.findMany({
     include: {
       owner: {
@@ -28,8 +32,13 @@ const SessionsPage = async () => {
           profile: true,
         },
       },
+      user: true,
     },
   })) as ExtendedStudySession[];
+
+  const filteredSessions = sessions.filter(
+    (users) => users.userId === parseInt(userSession.user.id, 10),
+  );
 
   return (
     <main>
@@ -61,7 +70,7 @@ const SessionsPage = async () => {
         </Row>
 
         <div className="session-card-grid">
-          <SessionCard sessions={sessions} />
+          <SessionCard sessions={filteredSessions} />
         </div>
       </Container>
     </main>
