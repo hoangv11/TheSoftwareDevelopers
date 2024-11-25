@@ -3,7 +3,6 @@ generator client {
 }
 
 datasource db {
-
   provider  = "postgresql"
   // for local development
   // url      = env("DATABASE_URL")
@@ -13,22 +12,23 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  profile   Profile?
-  session   Session[]
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  password String
+  role     Role      @default(USER)
+  bType    BuddyRole @default(GRASSHOPPER)
+  profile  Profile?
+  session  Session[] @relation("UserSessions")
 }
 
-model Profile { 
-  id        Int      @id @default(autoincrement())
+model Profile {
+  id        Int    @id @default(autoincrement())
   firstName String
   lastName  String
   major     String
   bio       String
-  userId    Int      @unique
-  user      User     @relation(fields: [userId], references: [id])
+  userId    Int    @unique
+  user      User   @relation(fields: [userId], references: [id])
 }
 
 model Session {
@@ -36,12 +36,12 @@ model Session {
   title     String
   desc      String
   location  String
-  startTime DateTime  
+  startTime DateTime
   endTime   DateTime
   sensei    String
   courseId  String
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  accepted  Boolean  @default(false)
+  user      User[]   @relation("UserSessions")
 }
 
 model Stuff {
@@ -50,6 +50,11 @@ model Stuff {
   quantity  Int
   condition Condition
   owner     String
+}
+
+enum BuddyRole {
+  SENSEI
+  GRASSHOPPER
 }
 
 enum Role {
