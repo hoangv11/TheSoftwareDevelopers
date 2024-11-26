@@ -1,4 +1,4 @@
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { getServerSession } from 'next-auth';
 import { StudySession } from '@prisma/client';
 import authOptions from '@/lib/auth';
@@ -60,27 +60,6 @@ const SessionsPage = async () => {
             <h2>Study Sessions</h2>
           </Col>
         </Row>
-
-        <Row className="justify-content-center mb-4">
-          <Col xs={12} className="text-center">
-            <Button
-              className="create-session-btn"
-              style={{
-                backgroundColor: '#b49cc8',
-                color: 'white',
-                border: 'none',
-                borderRadius: '25px',
-                height: '50px',
-                width: '180px',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                fontSize: '16px',
-              }}
-            >
-              Create Session
-            </Button>
-          </Col>
-        </Row>
-
         <div className="session-card-grid">
           <SessionCard sessions={sessions} currentUser={currentUser} />
         </div>

@@ -5,7 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { createSession } from '@/lib/dbActions';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import DatePicker from 'react-datepicker';
+import { useForm, Controller } from 'react-hook-form';
 import { CreateSessionSchema } from '@/lib/validationSchemas';
 import swal from 'sweetalert';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -18,6 +19,9 @@ const onSubmit = async (
     description: string;
     course: string;
     location: string;
+    sessionDate: Date;
+    startTime: Date;
+    endTime: Date;
   },
   session: any,
 ) => {
@@ -38,7 +42,7 @@ const onSubmit = async (
 const CreateSession: React.FC = () => {
   const { data: session, status } = useSession();
   // console.log('AddStuffForm', status, session);
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, control } = useForm({
     resolver: yupResolver(CreateSessionSchema),
   });
   if (status === 'loading') {
@@ -58,16 +62,89 @@ const CreateSession: React.FC = () => {
 
       {/* Form Container */}
       <section className={styles.formContainer}>
+        {/* Date Picker */}
+        <div className={styles.datePicker}>
+          <h5>Select Date</h5>
+          <Controller
+            name="sessionDate"
+            control={control}
+            render={({ field }) => (
+              <DatePicker
+                selected={field.value}
+                onChange={(date) => field.onChange(date)}
+                dateFormat="MMMM d, yyyy"
+                className={styles.inputField}
+                placeholderText="Select session date"
+              />
+            )}
+          />
+        </div>
+
+        {/* Time Input */}
+        <div className={styles.timeInputs}>
+          <div className={styles.timeInput}>
+            <h5>Start Time</h5>
+            <Controller
+              name="startTime"
+              control={control}
+              render={({ field }) => (
+                <input
+                  id="startTime"
+                  type="time"
+                  className={styles.inputField}
+                  value={
+                    field.value ? field.value.toTimeString().slice(0, 5) : ''
+                  }
+                  onChange={(e) => {
+                    const time = new Date();
+                    const [hours, minutes] = e.target.value.split(':');
+                    time.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+                    field.onChange(time);
+                  }}
+                />
+              )}
+            />
+          </div>
+
+          <div className={styles.timeInput}>
+            <h5>End Time</h5>
+            <Controller
+              name="endTime"
+              control={control}
+              render={({ field }) => (
+                <input
+                  id="endTime"
+                  type="time"
+                  className={styles.inputField}
+                  value={
+                    field.value ? field.value.toTimeString().slice(0, 5) : ''
+                  }
+                  onChange={(e) => {
+                    const time = new Date();
+                    const [hours, minutes] = e.target.value.split(':');
+                    time.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+                    field.onChange(time);
+                  }}
+                />
+              )}
+            />
+          </div>
+        </div>
         {/* Session Title */}
         <div className={styles.inputFieldContainer}>
           <h5>Session Title</h5>
-          <input type="text" placeholder="Enter session title" className={styles.inputField} {...register('title')} />
-        </div>
-        <div className={styles.inputFieldContainer}>
-          <h5>Session Course ID</h5>
           <input
             type="text"
-            placeholder="Enter course id (ICS 314)"
+            placeholder="Enter session title"
+            className={styles.inputField}
+            {...register('title')}
+          />
+        </div>
+        <div className={styles.inputFieldContainer}>
+          <h5>Session Subject</h5>
+          <input
+            type="text"
+            placeholder="Enter session subject"
             className={styles.inputField}
             {...register('course')}
           />
@@ -107,7 +184,11 @@ const CreateSession: React.FC = () => {
             >
               Back
             </Button>
-            <Button type="submit" variant="primary" className={styles.submitButton}>
+            <Button
+              type="submit"
+              variant="primary"
+              className={styles.submitButton}
+            >
               Submit
             </Button>
           </div>

@@ -49,7 +49,11 @@ const SessionsPage = async () => {
         <Row className="justify-content-center mb-4">
           <Col xs={12} className="text-center">
             <Button
-              className="create-session-btn"
+              as="a"
+              href="../session"
+              className="create-session-btn transition-all
+              duration-300 ease-in-out transform hover:scale-105
+              active:scale-95 text-decoration-none"
               style={{
                 backgroundColor: '#b49cc8',
                 color: 'white',
@@ -58,7 +62,14 @@ const SessionsPage = async () => {
                 height: '50px',
                 width: '180px',
                 boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                fontSize: '16px',
+                letterSpacing: '1px',
+                outline: 'none',
+                transition: 'all 0.3s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0',
+                lineHeight: '50px',
               }}
             >
               Create Session

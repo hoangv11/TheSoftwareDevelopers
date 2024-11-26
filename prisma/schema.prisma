@@ -30,15 +30,18 @@ model Profile {
 }
 
 model StudySession {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   title       String
   description String
   course      String
   location    String
-  added       Boolean @default(false)
+  sessionDate DateTime
+  startTime   DateTime
+  endTime     DateTime
+  added       Boolean  @default(false)
   userId      Int
-  owner       User    @relation("CreatedSessions", fields: [userId], references: [id])
-  user        User[]  @relation("UserSessions")
+  owner       User     @relation("CreatedSessions", fields: [userId], references: [id])
+  user        User[]   @relation("UserSessions")
 }
 
 model Stuff {
