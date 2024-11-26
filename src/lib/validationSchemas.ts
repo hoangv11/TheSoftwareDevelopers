@@ -25,3 +25,13 @@ export const EditProfileSchema = Yup.object({
   major: Yup.string().required(),
   bio: Yup.string().required(),
 });
+
+export const CreateSessionSchema = Yup.object({
+  title: Yup.string().required(),
+  course: Yup.string().required(),
+  description: Yup.string().required(),
+  location: Yup.string().required(),
+  sessionDate: Yup.date().required(),
+  startTime: Yup.date().required(),
+  endTime: Yup.date().required(),
+});

@@ -1,6 +1,6 @@
 'use server';
 
-import { Stuff, Condition, Profile } from '@prisma/client';
+import { Stuff, Condition, Profile, StudySession } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { redirect } from 'next/navigation';
 import { prisma } from './prisma';
@@ -117,6 +117,8 @@ export async function createProfile(profile: Profile) {
       data: {
         firstName: profile.firstName,
         lastName: profile.lastName,
+        major: profile.major,
+        bio: profile.bio,
       },
     });
   } else {
@@ -133,4 +135,40 @@ export async function createProfile(profile: Profile) {
   }
 
   return redirect('/profile');
+}
+
+export async function createSession(studySession: StudySession) {
+  // Check if a profile with the given userId exists
+
+  // If session does not exist, create a new one
+  await prisma.studySession.create({
+    data: {
+      userId: studySession.userId,
+      title: studySession.title,
+      description: studySession.description,
+      course: studySession.course,
+      location: studySession.location,
+      added: studySession.added,
+      sessionDate: studySession.sessionDate,
+      startTime: studySession.startTime,
+      endTime: studySession.endTime,
+
+      user: {
+        connect: { id: studySession.userId },
+      },
+    },
+  });
+
+  return redirect('/mysessions');
+}
+
+export async function updateSession(studySessionId: number, userId: number) {
+  await prisma.studySession.update({
+    where: { id: studySessionId },
+    data: {
+      user: {
+        connect: { id: userId },
+      },
+    },
+  });
 }

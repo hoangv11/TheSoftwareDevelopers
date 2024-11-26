@@ -141,10 +141,10 @@ const CreateSession: React.FC = () => {
           />
         </div>
         <div className={styles.inputFieldContainer}>
-          <h5>Session Subject</h5>
+          <h5>Session Course ID</h5>
           <input
             type="text"
-            placeholder="Enter session subject"
+            placeholder="Enter course id (ICS 314)"
             className={styles.inputField}
             {...register('course')}
           />
