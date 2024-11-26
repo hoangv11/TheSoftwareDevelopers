@@ -4,9 +4,6 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  // for local development
-  // url      = env("DATABASE_URL")
-  // for Vercel
   url       = env("POSTGRES_PRISMA_URL")
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
@@ -18,8 +15,8 @@ model User {
   role         Role           @default(USER)
   userrole     UserRole       @default(GRASSHOPPER)
   profile      Profile?
-  StudySession StudySession[] @relation("CreatedSessions") //Public Sessions
-  studysession StudySession[] @relation("UserSessions") //User Sessions
+  StudySession StudySession[] @relation("CreatedSessions")
+  studysession StudySession[] @relation("UserSessions")
 }
 
 model Profile {
@@ -33,23 +30,16 @@ model Profile {
 }
 
 model StudySession {
-  id     Int     @id @default(autoincrement())
-  title  String
-  added  Boolean @default(false)
-  user   User[]  @relation("UserSessions")
-  userId Int
-  owner  User    @relation("CreatedSessions", fields: [userId], references: [id])
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String
+  course      String
+  location    String
+  added       Boolean @default(false)
+  userId      Int
+  owner       User    @relation("CreatedSessions", fields: [userId], references: [id])
+  user        User[]  @relation("UserSessions")
 }
-
-// model MySession {
-//   id             Int          @id @default(autoincrement())
-//   userId         Int
-//   user           User         @relation(fields: [userId], references: [id])
-//   StudySession   StudySession @relation(fields: [studySessionId], references: [id])
-//   studySessionId Int
-
-//   @@unique([userId, studySessionId])
-// }
 
 model Stuff {
   id        Int       @id @default(autoincrement())

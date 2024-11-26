@@ -15,6 +15,9 @@ import styles from '../../styles/sessionpage.module.css';
 const onSubmit = async (
   data: {
     title: string;
+    description: string;
+    course: string;
+    location: string;
   },
   session: any,
 ) => {
@@ -57,13 +60,34 @@ const CreateSession: React.FC = () => {
       <section className={styles.formContainer}>
         {/* Session Title */}
         <div className={styles.inputFieldContainer}>
-          <h3>Session Title</h3>
+          <h5>Session Title</h5>
+          <input type="text" placeholder="Enter session title" className={styles.inputField} {...register('title')} />
+        </div>
+        <div className={styles.inputFieldContainer}>
+          <h5>Session Course ID</h5>
           <input
-            id="title"
             type="text"
-            placeholder="Enter session title"
+            placeholder="Enter course id (ICS 314)"
             className={styles.inputField}
-            {...register('title')}
+            {...register('course')}
+          />
+        </div>
+        <div className={styles.inputFieldContainer}>
+          <h5>Session Location</h5>
+          <input
+            type="text"
+            placeholder="Enter session location"
+            className={styles.inputField}
+            {...register('location')}
+          />
+        </div>
+        <div className={styles.textAreaField}>
+          <h5>Description</h5>
+          <textarea
+            placeholder="Enter session description"
+            rows={4}
+            className={styles.descriptionTextarea}
+            {...register('description')}
           />
         </div>
       </section>
@@ -83,11 +107,7 @@ const CreateSession: React.FC = () => {
             >
               Back
             </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              className={styles.submitButton}
-            >
+            <Button type="submit" variant="primary" className={styles.submitButton}>
               Submit
             </Button>
           </div>

@@ -1,38 +1,52 @@
 'use client';
 
-import { useState } from 'react';
-import DatePicker from 'react-datepicker';
+import { Form, Button } from 'react-bootstrap';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { createSession } from '@/lib/dbActions';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { CreateSessionSchema } from '@/lib/validationSchemas';
+import swal from 'sweetalert';
 import 'react-datepicker/dist/react-datepicker.css';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from '../../styles/sessionpage.module.css';
 
-export default function SessionPage() {
-  // State variables for form inputs
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [location, setLocation] = useState('');
-  const [description, setDescription] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
+const onSubmit = async (
+  data: {
+    title: string;
+    description: string;
+    course: string;
+    location: string;
+  },
+  session: any,
+) => {
+  // console.log(`onSubmit data: ${JSON.stringify(data, null, 2)}`);
+  const userId = parseInt(session?.user?.id, 10);
+  await createSession({
+    ...data,
+    added: true,
+    userId,
+    id: userId,
+  });
 
-  // Handlers for the inputs
-  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => setLocation(e.target.value);
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value);
-  const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => setStartTime(e.target.value);
-  const handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => setEndTime(e.target.value);
+  swal('Success', 'created session', 'success', {
+    timer: 1000,
+  });
+};
 
-  const handleSubmit = () => {
-    if (new Date(`1970-01-01T${endTime}:00Z`) <= new Date(`1970-01-01T${startTime}:00Z`)) {
-      alert('End time must be after the start time!'); // eslint-disable-line no-alert
-      return;
-    }
-
-    console.log('Session Details:', { startDate, location, description, startTime, endTime });
-    alert('Session created successfully!'); // eslint-disable-line no-alert
-  };
-
-  const handleBack = () => {
-    console.log('Back button clicked');
-    alert('Going back to the previous page!'); // eslint-disable-line no-alert
-  };
+const CreateSession: React.FC = () => {
+  const { data: session, status } = useSession();
+  // console.log('AddStuffForm', status, session);
+  const { register, handleSubmit } = useForm({
+    resolver: yupResolver(CreateSessionSchema),
+  });
+  if (status === 'loading') {
+    return <LoadingSpinner />;
+  }
+  if (status === 'unauthenticated') {
+    redirect('/auth/signin');
+  }
 
   return (
     <main className={styles.container}>
@@ -44,81 +58,63 @@ export default function SessionPage() {
 
       {/* Form Container */}
       <section className={styles.formContainer}>
-
-        {/* Date Picker */}
-        <div className={styles.datePicker}>
-          <h3>Select Date</h3>
-          <DatePicker
-            id="date"
-            selected={startDate}
-            onChange={(date: Date | null) => setStartDate(date)}
-            placeholderText="Select session date"
-            dateFormat="MMMM d, yyyy"
+        {/* Session Title */}
+        <div className={styles.inputFieldContainer}>
+          <h5>Session Title</h5>
+          <input type="text" placeholder="Enter session title" className={styles.inputField} {...register('title')} />
+        </div>
+        <div className={styles.inputFieldContainer}>
+          <h5>Session Course ID</h5>
+          <input
+            type="text"
+            placeholder="Enter course id (ICS 314)"
             className={styles.inputField}
+            {...register('course')}
           />
         </div>
-
-        {/* Time Input */}
-        <div className={styles.timeInputs}>
-          <div className={styles.timeInput}>
-            <h3>Start Time</h3>
-            <input
-              id="startTime"
-              type="time"
-              value={startTime}
-              onChange={handleStartTimeChange}
-              className={styles.inputField}
-            />
-          </div>
-
-          <div className={styles.timeInput}>
-            <h3>End Time</h3>
-            <input
-              id="endTime"
-              type="time"
-              value={endTime}
-              onChange={handleEndTimeChange}
-              className={styles.inputField}
-            />
-          </div>
-        </div>
-
-        {/* Location Input */}
         <div className={styles.inputFieldContainer}>
-          <h3>Location</h3>
+          <h5>Session Location</h5>
           <input
-            id="location"
             type="text"
-            value={location}
-            onChange={handleLocationChange}
             placeholder="Enter session location"
             className={styles.inputField}
+            {...register('location')}
           />
         </div>
-
-        {/* Description */}
         <div className={styles.textAreaField}>
-          <h3>Description</h3>
+          <h5>Description</h5>
           <textarea
-            id="description"
-            value={description}
-            onChange={handleDescriptionChange}
             placeholder="Enter session description"
             rows={4}
             className={styles.descriptionTextarea}
+            {...register('description')}
           />
         </div>
       </section>
 
-      {/* Buttons */}
+      {/* Form with Buttons */}
       <footer className={styles.footer}>
-        <button type="button" className={styles.backButton} onClick={handleBack}>
-          Back
-        </button>
-        <button type="button" className={styles.submitButton} onClick={handleSubmit}>
-          Submit
-        </button>
+        <Form onSubmit={handleSubmit((data) => onSubmit(data, session))}>
+          <div className="d-flex justify-content-between">
+            <Button
+              type="button"
+              variant="secondary"
+              className={styles.backButton}
+              onClick={() => {
+                console.log('Back button clicked');
+                // Handle back action
+              }}
+            >
+              Back
+            </Button>
+            <Button type="submit" variant="primary" className={styles.submitButton}>
+              Submit
+            </Button>
+          </div>
+        </Form>
       </footer>
     </main>
   );
-}
+};
+
+export default CreateSession;
