@@ -11,12 +11,14 @@
 @media (max-width: 992px) {
   .session-card-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
   }
 }
 
 @media (max-width: 576px) {
   .session-card-grid {
     grid-template-columns: 1fr;
+    gap: 20px; 
   }
 }
 
