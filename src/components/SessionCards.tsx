@@ -3,6 +3,8 @@
 import { StudySession } from '@prisma/client';
 import { Card, Button } from 'react-bootstrap';
 import { updateSession } from '@/lib/dbActions';
+import swal from 'sweetalert';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/sessioncards.css';
 
 type ExtendedStudySession = StudySession & {
@@ -23,11 +25,16 @@ const SessionCard = ({
 }) => {
   const addNewSession = async (studySession: ExtendedStudySession) => {
     await updateSession(studySession.id, currentUser);
+
+    swal('Success', 'Session Added', 'success', {
+      timer: 1500,
+    });
   };
   return (
     <div className="sessionCard">
       {sessions.map((session) => (
         <div
+          key={session.id} // **Add a unique key here**
           className="sessionCardBorder"
           style={{ backgroundColor: '#e6f3ff' }}
         >

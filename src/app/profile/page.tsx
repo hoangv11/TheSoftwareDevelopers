@@ -4,19 +4,30 @@ import { prisma } from '@/lib/prisma';
 import React from 'react';
 import Image from 'next/image';
 import '../../styles/profilepage.css';
-import { Star as StarIcon, GraduationCap, Book, Clock } from 'lucide-react';
+import { Star as StarIcon, GraduationCap, Clock } from 'lucide-react';
 import authOptions from '@/lib/auth';
+import Link from 'next/link';
+import { Button } from 'react-bootstrap';
 
-const myProfile = async () => {
+const MyProfile = async () => {
   const session = await getServerSession(authOptions);
   if (!session || !session.user || !session.user.email) {
     return <div>Session not found</div>;
   }
+
   const userSession = session as unknown as {
     user: { email: string; id: string; randomKey: string };
   };
 
   const profiles: Profile[] = await prisma.profile.findMany({});
+
+  const userProfile = profiles.find(
+    (profile) => profile.userId === parseInt(userSession.user.id, 10),
+  );
+
+  if (!userProfile) {
+    return <div>Profile not found</div>;
+  }
 
   return (
     <div className="container">
@@ -26,28 +37,20 @@ const myProfile = async () => {
           src="/pfp1.png"
           alt="profile picture"
           className="profile-picture"
-          width={100}
-          height={100}
+          width={150}
+          height={150}
         />
-        <div>
-          <h1 className="profile-name">
-            {' '}
-            {profiles
-              .filter(
-                (profile) => profile.userId === parseInt(userSession.user?.id, 10),
-              )
-              .map((profile) => (
-                <div key={profile.userId}>
-                  <h5>{`${profile.firstName} ${profile.lastName}`}</h5>
-                  <h5>{`${profile.major}`}</h5>
-                  <h5>{`${profile.bio}`}</h5>
-                </div>
-              ))}
-          </h1>
+        <div className="profile-info">
+          <h1 className="profile-name">{`${userProfile.firstName} ${userProfile.lastName}`}</h1>
+          <p className="profile-major">{userProfile.major}</p>
+          <p className="profile-bio">{userProfile.bio}</p>
           <div className="points-container">
-            <StarIcon size={20} style={{ marginRight: '0.5rem' }} />
+            <StarIcon size={20} className="star-icon" />
             <span>1250 Points</span>
           </div>
+          <Link href="/editprofile">
+            <Button className="edit-profile-button">Edit Profile</Button>
+          </Link>
         </div>
       </div>
 
@@ -87,22 +90,6 @@ const myProfile = async () => {
             </div>
           </div>
         </div>
-
-        {/* Mentor Courses */}
-        <div className="course-card">
-          <h2 className="course-title">
-            <Book className="course-icon" />
-            Mentor Courses
-          </h2>
-          <div className="mentor-course-item">
-            <span>Python Programming</span>
-            <span className="students-count">24 Students</span>
-          </div>
-          <div className="mentor-course-item">
-            <span>JavaScript Basics</span>
-            <span className="students-count">18 Students</span>
-          </div>
-        </div>
       </div>
 
       {/* Session History */}
@@ -110,9 +97,7 @@ const myProfile = async () => {
         <thead>
           <tr>
             <th className="table-header">
-              <Clock
-                style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}
-              />
+              <Clock className="clock-icon" />
               Session History
             </th>
           </tr>
@@ -144,4 +129,4 @@ const myProfile = async () => {
   );
 };
 
-export default myProfile;
+export default MyProfile;

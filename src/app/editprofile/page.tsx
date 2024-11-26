@@ -15,39 +15,41 @@ const onSubmit = async (
   data: { firstName: string; lastName: string; major: string; bio: string },
   session: any,
 ) => {
-  // console.log(`onSubmit data: ${JSON.stringify(data, null, 2)}`);
   const userId = parseInt(session?.user?.id, 10); // Assuming userId is available in session
   await createProfile({ ...data, userId, id: userId });
 
-  swal('Success', 'created profile', 'success', {
-    timer: 1000,
+  swal('Success', 'Profile created successfully!', 'success', {
+    timer: 1500,
   });
 };
 
 const EditProfile: React.FC = () => {
   const { data: session, status } = useSession();
-  // console.log('AddStuffForm', status, session);
-  const { register, handleSubmit } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(EditProfileSchema),
   });
+
   if (status === 'loading') {
     return <LoadingSpinner />;
   }
+
   if (status === 'unauthenticated') {
     redirect('/auth/signin');
   }
 
   return (
-    <div className="p-5">
-      <h1 className="createSessionTitle text-center">
-        <strong>Edit Profile</strong>
-      </h1>
-      <Container className="py-3">
+    <div className="edit-profile-container">
+      <h1 className="title">Edit Profile</h1>
+      <Container>
         <Row className="justify-content-center">
-          <Col xs={10}>
-            <Card className="thebox">
+          <Col lg={8} md={10}>
+            <Card className="profile-card">
               <Card.Body>
-                <div className="profile-image-container">
+                <div className="profile-image-section">
                   <div className="profile-image">
                     <div className="add-icon-circle">
                       <span className="add-icon">+</span>
@@ -58,79 +60,65 @@ const EditProfile: React.FC = () => {
                   onSubmit={handleSubmit((data) => onSubmit(data, session))}
                 >
                   <Row>
-                    <Col>
-                      <Form.Group controlId="formFirstName">
-                        <Form.Label />
-                        <input
+                    <Col md={6}>
+                      <Form.Group controlId="formFirstName" className="mb-3">
+                        <Form.Label>First Name</Form.Label>
+                        <Form.Control
                           type="text"
-                          className="form-control"
+                          placeholder="Enter your first name"
                           {...register('firstName')}
-                          placeholder="First Name"
+                          isInvalid={!!errors.firstName}
                         />
-                        <div className="invalid-feedback" />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.firstName?.message}
+                        </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
-                    <Col>
-                      <Form.Group controlId="formLastName">
-                        <Form.Label />
-                        <input
+                    <Col md={6}>
+                      <Form.Group controlId="formLastName" className="mb-3">
+                        <Form.Label>Last Name</Form.Label>
+                        <Form.Control
                           type="text"
-                          className="form-control"
+                          placeholder="Enter your last name"
                           {...register('lastName')}
-                          placeholder="Last Name"
+                          isInvalid={!!errors.lastName}
                         />
-                        <div className="invalid-feedback" />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.lastName?.message}
+                        </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
                   </Row>
-                  <Row>
-                    <Col>
-                      <Form.Group controlId="formMajor">
-                        <Form.Label />
-                        <input
-                          type="text"
-                          className="form-control"
-                          {...register('major')}
-                          placeholder="Major"
-                        />
-                        <div className="invalid-feedback" />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      <Form.Group controlId="formBio">
-                        <Form.Label />
-                        <input
-                          type="text"
-                          className="form-control"
-                          {...register('bio')}
-                          placeholder="Bio"
-                        />
-                        <div className="invalid-feedback" />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <input type="hidden" />
-                  <Form.Group className="form-group">
-                    <Row className="pt-3">
-                      <Col />
-                      <Col />
-                      <Col />
-                      <Col>
-                        <Button
-                          className="cSbutton"
-                          type="submit"
-                          variant="primary"
-                        >
-                          Save Profile
-                        </Button>
-                      </Col>
-                      <Col />
-                      <Col />
-                      <Col />
-                    </Row>
+                  <Form.Group controlId="formMajor" className="mb-3">
+                    <Form.Label>Major</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter your major"
+                      {...register('major')}
+                      isInvalid={!!errors.major}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.major?.message}
+                    </Form.Control.Feedback>
                   </Form.Group>
+                  <Form.Group controlId="formBio" className="mb-4">
+                    <Form.Label>Bio</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={4}
+                      placeholder="Tell us about yourself"
+                      {...register('bio')}
+                      isInvalid={!!errors.bio}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.bio?.message}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <div className="d-flex justify-content-center">
+                    <Button type="submit" className="save-button">
+                      Save Profile
+                    </Button>
+                  </div>
                 </Form>
               </Card.Body>
             </Card>

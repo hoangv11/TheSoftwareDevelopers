@@ -57,7 +57,7 @@ const SessionsPage = async () => {
       <Container className="py-3">
         <Row className="justify-content-center mb-4">
           <Col xs={12} className="text-center">
-            <h2>Study Sessions</h2>
+            <h2>My Study Sessions</h2>
           </Col>
         </Row>
         <div className="session-card-grid">
