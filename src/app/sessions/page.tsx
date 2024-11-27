@@ -76,10 +76,7 @@ const SessionsPage = async () => {
             </Button>
           </Col>
         </Row>
-
-        <div className="session-card-grid">
-          <SessionCard sessions={sessions} currentUser={currentUser} />
-        </div>
+        <SessionCard sessions={sessions} currentUser={currentUser} />
       </Container>
     </main>
   );

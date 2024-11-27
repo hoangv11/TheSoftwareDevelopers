@@ -58,7 +58,7 @@ const SessionCard = ({
       <div className="sessionCard">
         {searchFilter.map((session) => (
           <div
-            key={session.id} // **Add a unique key here**
+            key={session.id}
             className="sessionCardBorder"
             style={{ backgroundColor: '#e6f3ff' }}
           >
