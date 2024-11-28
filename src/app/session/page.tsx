@@ -34,7 +34,7 @@ const onSubmit = async (
     id: userId,
   });
 
-  swal('Success', 'created session', 'success', {
+  swal('Success', 'Created Session', 'success', {
     timer: 1000,
   });
 };
