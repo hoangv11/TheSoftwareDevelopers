@@ -164,20 +164,20 @@ export async function createSession(studySession: StudySession) {
 
 export async function updateSession(
   studySessionId: number,
-  data: Partial<StudySession>,
+  studySession: Partial<StudySession>,
 ) {
   await prisma.studySession.update({
     where: { id: studySessionId },
     data: {
-      title: data.title,
-      description: data.description,
-      course: data.course,
-      location: data.location,
-      sessionDate: data.sessionDate,
-      startTime: data.startTime,
-      endTime: data.endTime,
+      title: studySession.title,
+      description: studySession.description,
+      course: studySession.course,
+      location: studySession.location,
+      sessionDate: studySession.sessionDate,
+      startTime: studySession.startTime,
+      endTime: studySession.endTime,
       user: {
-        connect: { id: data.userId },
+        connect: { id: studySession.userId },
       },
     },
   });
