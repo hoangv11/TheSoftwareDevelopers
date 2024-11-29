@@ -11,6 +11,7 @@ import '../styles/sessioncards.css';
 
 type ExtendedStudySession = StudySession & {
   owner: {
+    id: number;
     profile?: {
       firstName: string;
       lastName: string;
@@ -27,7 +28,18 @@ const SessionCard = ({
 }) => {
   const [search, setSearch] = useState('');
   const addNewSession = async (studySession: ExtendedStudySession) => {
-    await updateSession(studySession.id, currentUser);
+    await updateSession(studySession.id, currentUser, {
+      id: studySession.id,
+      title: studySession.title,
+      description: studySession.description,
+      course: studySession.course,
+      location: studySession.location,
+      sessionDate: studySession.sessionDate,
+      startTime: studySession.startTime,
+      endTime: studySession.endTime,
+      added: true,
+      userId: currentUser,
+    });
 
     swal('Success', 'Session Added', 'success', {
       timer: 1500,
@@ -116,13 +128,21 @@ const SessionCard = ({
                     <span className="detail-value">{session.location}</span>
                   </div>
                 </div>
-
-                <Button
-                  className="requestBtn mt-3"
-                  onClick={() => addNewSession(session)}
-                >
-                  Add Session
-                </Button>
+                {session.owner.id === currentUser ? (
+                  <Button
+                    href={`/editStudySession?id=${session.id}`}
+                    className="requestBtn mt-3"
+                  >
+                    Edit Session
+                  </Button>
+                ) : (
+                  <Button
+                    className="requestBtn mt-3"
+                    onClick={() => addNewSession(session)}
+                  >
+                    Add Session
+                  </Button>
+                )}
               </Card.Body>
             </Card>
           </div>

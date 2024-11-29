@@ -8,6 +8,7 @@ import '../../styles/sessionpage.css';
 
 type ExtendedStudySession = StudySession & {
   owner: {
+    id: number;
     profile?: {
       firstName: string;
       lastName: string;
@@ -30,8 +31,14 @@ const SessionsPage = async () => {
   const sessions: ExtendedStudySession[] = (await prisma.studySession.findMany({
     include: {
       owner: {
-        include: {
-          profile: true,
+        select: {
+          id: true,
+          profile: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
         },
       },
     },

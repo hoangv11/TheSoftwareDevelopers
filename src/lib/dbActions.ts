@@ -162,13 +162,24 @@ export async function createSession(studySession: StudySession) {
   return redirect('/mysessions');
 }
 
-export async function updateSession(studySessionId: number, userId: number) {
+export async function updateSession(
+  studySessionId: number,
+  userId: number,
+  studySession: StudySession,
+) {
   await prisma.studySession.update({
     where: { id: studySessionId },
     data: {
+      title: studySession.title,
+      description: studySession.description,
+      course: studySession.course,
+      location: studySession.location,
       user: {
         connect: { id: userId },
       },
+      sessionDate: studySession.sessionDate,
+      startTime: studySession.startTime,
+      endTime: studySession.endTime,
     },
   });
 }
