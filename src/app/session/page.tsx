@@ -178,10 +178,8 @@ const CreateSession: React.FC = () => {
               type="button"
               variant="secondary"
               className={styles.backButton}
-              onClick={() => {
-                console.log('Back button clicked');
-                // Handle back action
-              }}
+              as="a"
+              href="../sessions"
             >
               Back
             </Button>
