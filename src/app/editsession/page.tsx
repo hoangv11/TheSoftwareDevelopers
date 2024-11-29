@@ -203,6 +203,14 @@ const EditSession = () => {
               Back
             </Button>
             <Button
+              variant="danger"
+              as="a"
+              href="../sessions"
+              className={styles.submitButton}
+            >
+              Delete
+            </Button>
+            <Button
               type="submit"
               variant="primary"
               as="a"

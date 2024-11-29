@@ -201,3 +201,12 @@ export async function getSessionById(id: number) {
     },
   });
 }
+
+export async function deleteSession(id: number) {
+  // console.log(`deleteStuff id: ${id}`);
+  await prisma.studySession.delete({
+    where: { id },
+  });
+  // After deleting, redirect to the list page
+  redirect('/sessions');
+}
