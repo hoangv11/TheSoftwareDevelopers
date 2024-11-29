@@ -75,6 +75,7 @@ const CreateSession: React.FC = () => {
                 dateFormat="MMMM d, yyyy"
                 className={styles.inputField}
                 placeholderText="Select session date"
+                todayButton="Today"
               />
             )}
           />
