@@ -1,91 +1,75 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
 import { Form, Button } from 'react-bootstrap';
 import swal from 'sweetalert';
 import { getSessionById, updateSession } from '../../lib/dbActions';
 import styles from '../../styles/sessionpage.module.css';
-import 'react-datepicker/dist/react-datepicker.css';
+
+interface FormData {
+  title: string;
+  description: string;
+  course: string;
+  location: string;
+  sessionDate: Date;
+  startTime: Date;
+  endTime: Date;
+}
+
+interface Session {
+  id: number;
+  title: string;
+  description: string;
+  course: string;
+  location: string;
+  sessionDate: Date;
+  startTime: Date;
+  endTime: Date;
+  userId: number;
+}
 
 const EditSession = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
-
-  interface Session {
-    id: number;
-    title: string;
-    description: string;
-    course: string;
-    location: string;
-    sessionDate: Date;
-    startTime: Date;
-    endTime: Date;
-    added: boolean;
-    userId: number;
-    owner: {
-      id: number;
-      profile: {
-        firstName: string;
-        lastName: string;
-      } | null;
-    };
-  }
-
+  const id = searchParams.get('id');
   const [session, setSession] = useState<Session | null>(null);
-
   const { register, handleSubmit, control, setValue } = useForm<FormData>();
-  useEffect(() => {
-    const id = searchParams.get('id');
-    if (id) {
-      const fetchSession = async () => {
-        const sessionData = await getSessionById(parseInt(id as string, 10));
-        setSession(sessionData);
 
-        if (sessionData) {
-          setValue('title', sessionData.title);
-          setValue('description', sessionData.description);
-          setValue('course', sessionData.course);
-          setValue('location', sessionData.location);
-          setValue('sessionDate', new Date(sessionData.sessionDate));
-          setValue('startTime', new Date(sessionData.startTime));
-          setValue('endTime', new Date(sessionData.endTime));
-        }
-      };
-      fetchSession();
-    }
-  }, [searchParams, setSession, setValue]);
-  interface FormData {
-    title: string;
-    description: string;
-    course: string;
-    location: string;
-    sessionDate: Date;
-    startTime: Date;
-    endTime: Date;
-  }
+  useEffect(() => {
+    const fetchSession = async () => {
+      if (!id) return;
+
+      const sessionData = await getSessionById(parseInt(id, 10));
+
+      if (!sessionData) return;
+
+      setSession(sessionData);
+      setValue('title', sessionData.title);
+      setValue('description', sessionData.description);
+      setValue('course', sessionData.course);
+      setValue('location', sessionData.location);
+      setValue('sessionDate', new Date(sessionData.sessionDate));
+      setValue('startTime', new Date(sessionData.startTime));
+      setValue('endTime', new Date(sessionData.endTime));
+    };
+
+    fetchSession();
+  }, [id, setValue]);
 
   const onSubmit = async (data: FormData) => {
-    try {
-      const id = searchParams.get('id');
-      await updateSession(parseInt(id as string, 10), {
-        ...data,
-        userId: session?.userId,
-      });
+    if (!id || !session) return;
 
-      swal('Success', 'Session Updated', 'success', {
-        timer: 1500,
-      });
+    await updateSession(parseInt(id, 10), {
+      ...data,
+      userId: session.userId,
+    });
 
-      router.push('/sessions');
-    } catch (error) {
-      swal('Error', 'Failed to update session', 'error');
-    }
+    swal('Success', 'Session Updated', 'success', {
+      timer: 1500,
+    });
   };
-
-  if (!session) return <div>Loading...</div>;
 
   return (
     <main className={styles.container}>
@@ -213,16 +197,16 @@ const EditSession = () => {
               type="button"
               variant="secondary"
               className={styles.backButton}
-              onClick={() => {
-                console.log('Back button clicked');
-                // Handle back action
-              }}
+              as="a"
+              href="../sessions"
             >
               Back
             </Button>
             <Button
               type="submit"
               variant="primary"
+              as="a"
+              href="../sessions"
               className={styles.submitButton}
             >
               Update
