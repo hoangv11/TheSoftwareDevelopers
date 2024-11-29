@@ -164,22 +164,40 @@ export async function createSession(studySession: StudySession) {
 
 export async function updateSession(
   studySessionId: number,
-  userId: number,
-  studySession: StudySession,
+  data: Partial<StudySession>,
 ) {
   await prisma.studySession.update({
     where: { id: studySessionId },
     data: {
-      title: studySession.title,
-      description: studySession.description,
-      course: studySession.course,
-      location: studySession.location,
+      title: data.title,
+      description: data.description,
+      course: data.course,
+      location: data.location,
+      sessionDate: data.sessionDate,
+      startTime: data.startTime,
+      endTime: data.endTime,
       user: {
-        connect: { id: userId },
+        connect: { id: data.userId },
       },
-      sessionDate: studySession.sessionDate,
-      startTime: studySession.startTime,
-      endTime: studySession.endTime,
+    },
+  });
+}
+
+export async function getSessionById(id: number) {
+  return prisma.studySession.findUnique({
+    where: { id },
+    include: {
+      owner: {
+        select: {
+          id: true,
+          profile: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      },
     },
   });
 }

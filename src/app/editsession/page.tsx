@@ -1,20 +1,21 @@
 'use client';
 
-import { Form, Button } from 'react-bootstrap';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { updateSession } from '@/lib/dbActions';
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
-import DatePicker from 'react-datepicker';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
-import { CreateSessionSchema } from '@/lib/validationSchemas';
+import DatePicker from 'react-datepicker';
+import { Form, Button } from 'react-bootstrap';
 import swal from 'sweetalert';
-import 'react-datepicker/dist/react-datepicker.css';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { getSessionById, updateSession } from '../../lib/dbActions';
 import styles from '../../styles/sessionpage.module.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
-const onSubmit = async (
-  data: {
+const EditSession = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  interface Session {
+    id: number;
     title: string;
     description: string;
     course: string;
@@ -22,34 +23,69 @@ const onSubmit = async (
     sessionDate: Date;
     startTime: Date;
     endTime: Date;
-  },
-  session: any,
-) => {
-  // console.log(`onSubmit data: ${JSON.stringify(data, null, 2)}`);
-  const userId = parseInt(session?.user?.id, 10);
-  await updateSession({
-    ...data,
-    added: true,
-    userId,
-    id: userId,
-  });
-
-  swal('Success', 'Created Session', 'success', {
-    timer: 1000,
-  });
-};
-
-const EditSession: React.FC = () => {
-  const { data: session, status } = useSession();
-  const { register, handleSubmit, control } = useForm({
-    resolver: yupResolver(CreateSessionSchema),
-  });
-  if (status === 'loading') {
-    return <LoadingSpinner />;
+    added: boolean;
+    userId: number;
+    owner: {
+      id: number;
+      profile: {
+        firstName: string;
+        lastName: string;
+      } | null;
+    };
   }
-  if (status === 'unauthenticated') {
-    redirect('/auth/signin');
+
+  const [session, setSession] = useState<Session | null>(null);
+
+  const { register, handleSubmit, control, setValue } = useForm<FormData>();
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (id) {
+      const fetchSession = async () => {
+        const sessionData = await getSessionById(parseInt(id as string, 10));
+        setSession(sessionData);
+
+        if (sessionData) {
+          setValue('title', sessionData.title);
+          setValue('description', sessionData.description);
+          setValue('course', sessionData.course);
+          setValue('location', sessionData.location);
+          setValue('sessionDate', new Date(sessionData.sessionDate));
+          setValue('startTime', new Date(sessionData.startTime));
+          setValue('endTime', new Date(sessionData.endTime));
+        }
+      };
+      fetchSession();
+    }
+  }, [searchParams, setSession, setValue]);
+  interface FormData {
+    title: string;
+    description: string;
+    course: string;
+    location: string;
+    sessionDate: Date;
+    startTime: Date;
+    endTime: Date;
   }
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      const id = searchParams.get('id');
+      await updateSession(parseInt(id as string, 10), {
+        ...data,
+        userId: session?.userId,
+      });
+
+      swal('Success', 'Session Updated', 'success', {
+        timer: 1500,
+      });
+
+      router.push('/sessions');
+    } catch (error) {
+      swal('Error', 'Failed to update session', 'error');
+    }
+  };
+
+  if (!session) return <div>Loading...</div>;
 
   return (
     <main className={styles.container}>
@@ -171,7 +207,7 @@ const EditSession: React.FC = () => {
 
       {/* Form with Buttons */}
       <footer className={styles.footer}>
-        <Form onSubmit={handleSubmit((data) => onSubmit(data, session))}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
           <div className="d-flex justify-content-between">
             <Button
               type="button"
@@ -189,7 +225,7 @@ const EditSession: React.FC = () => {
               variant="primary"
               className={styles.submitButton}
             >
-              Submit
+              Update
             </Button>
           </div>
         </Form>

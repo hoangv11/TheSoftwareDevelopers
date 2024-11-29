@@ -28,7 +28,7 @@ const SessionCard = ({
 }) => {
   const [search, setSearch] = useState('');
   const addNewSession = async (studySession: ExtendedStudySession) => {
-    await updateSession(studySession.id, currentUser, {
+    await updateSession(studySession.id, {
       id: studySession.id,
       title: studySession.title,
       description: studySession.description,
@@ -130,7 +130,7 @@ const SessionCard = ({
                 </div>
                 {session.owner.id === currentUser ? (
                   <Button
-                    href={`/editStudySession?id=${session.id}`}
+                    href={`/editsession?id=${session.id}`}
                     className="requestBtn mt-3"
                   >
                     Edit Session
