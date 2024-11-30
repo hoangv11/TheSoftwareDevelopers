@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
@@ -77,172 +77,174 @@ const EditSession = () => {
   };
 
   return (
-    <main className={styles.container}>
-      {/* Header */}
-      <section className={styles.header}>
-        <h1>Edit Session</h1>
-        <p>Fill in the details below to schedule a new session.</p>
-      </section>
+    <Suspense fallback={<div>Loading...</div>}>
+      <main className={styles.container}>
+        {/* Header */}
+        <section className={styles.header}>
+          <h1>Edit Session</h1>
+          <p>Fill in the details below to schedule a new session.</p>
+        </section>
 
-      {/* Form Container */}
-      <section className={styles.formContainer}>
-        {/* Date Picker */}
-        <div className={styles.datePicker}>
-          <h5>Select Date</h5>
-          <Controller
-            name="sessionDate"
-            control={control}
-            render={({ field }) => (
-              <DatePicker
-                selected={field.value}
-                onChange={(date) => field.onChange(date)}
-                dateFormat="MMMM d, yyyy"
-                className={styles.inputField}
-                placeholderText="Select session date"
-                todayButton="Today"
+        {/* Form Container */}
+        <section className={styles.formContainer}>
+          {/* Date Picker */}
+          <div className={styles.datePicker}>
+            <h5>Select Date</h5>
+            <Controller
+              name="sessionDate"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  selected={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  dateFormat="MMMM d, yyyy"
+                  className={styles.inputField}
+                  placeholderText="Select session date"
+                  todayButton="Today"
+                />
+              )}
+            />
+          </div>
+
+          {/* Time Input */}
+          <div className={styles.timeInputs}>
+            <div className={styles.timeInput}>
+              <h5>Start Time</h5>
+              <Controller
+                name="startTime"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    id="startTime"
+                    type="time"
+                    className={styles.inputField}
+                    value={
+                      field.value ? field.value.toTimeString().slice(0, 5) : ''
+                    }
+                    onChange={(e) => {
+                      const time = new Date();
+                      const [hours, minutes] = e.target.value.split(':');
+                      time.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+                      field.onChange(time);
+                    }}
+                  />
+                )}
               />
-            )}
-          />
-        </div>
+            </div>
 
-        {/* Time Input */}
-        <div className={styles.timeInputs}>
-          <div className={styles.timeInput}>
-            <h5>Start Time</h5>
-            <Controller
-              name="startTime"
-              control={control}
-              render={({ field }) => (
-                <input
-                  id="startTime"
-                  type="time"
-                  className={styles.inputField}
-                  value={
-                    field.value ? field.value.toTimeString().slice(0, 5) : ''
-                  }
-                  onChange={(e) => {
-                    const time = new Date();
-                    const [hours, minutes] = e.target.value.split(':');
-                    time.setHours(parseInt(hours, 10), parseInt(minutes, 10));
-                    field.onChange(time);
-                  }}
-                />
-              )}
+            <div className={styles.timeInput}>
+              <h5>End Time</h5>
+              <Controller
+                name="endTime"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    id="endTime"
+                    type="time"
+                    className={styles.inputField}
+                    value={
+                      field.value ? field.value.toTimeString().slice(0, 5) : ''
+                    }
+                    onChange={(e) => {
+                      const time = new Date();
+                      const [hours, minutes] = e.target.value.split(':');
+                      time.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+                      field.onChange(time);
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </div>
+          {/* Session Title */}
+          <div className={styles.inputFieldContainer}>
+            <h5>Session Title</h5>
+            <input
+              type="text"
+              placeholder="Enter session title"
+              className={styles.inputField}
+              {...register('title')}
             />
           </div>
-
-          <div className={styles.timeInput}>
-            <h5>End Time</h5>
-            <Controller
-              name="endTime"
-              control={control}
-              render={({ field }) => (
-                <input
-                  id="endTime"
-                  type="time"
-                  className={styles.inputField}
-                  value={
-                    field.value ? field.value.toTimeString().slice(0, 5) : ''
-                  }
-                  onChange={(e) => {
-                    const time = new Date();
-                    const [hours, minutes] = e.target.value.split(':');
-                    time.setHours(parseInt(hours, 10), parseInt(minutes, 10));
-                    field.onChange(time);
-                  }}
-                />
-              )}
+          <div className={styles.inputFieldContainer}>
+            <h5>Session Subject</h5>
+            <input
+              type="text"
+              placeholder="Enter session subject"
+              className={styles.inputField}
+              {...register('course')}
             />
           </div>
-        </div>
-        {/* Session Title */}
-        <div className={styles.inputFieldContainer}>
-          <h5>Session Title</h5>
-          <input
-            type="text"
-            placeholder="Enter session title"
-            className={styles.inputField}
-            {...register('title')}
-          />
-        </div>
-        <div className={styles.inputFieldContainer}>
-          <h5>Session Subject</h5>
-          <input
-            type="text"
-            placeholder="Enter session subject"
-            className={styles.inputField}
-            {...register('course')}
-          />
-        </div>
-        <div className={styles.inputFieldContainer}>
-          <h5>Session Location</h5>
-          <input
-            type="text"
-            placeholder="Enter session location"
-            className={styles.inputField}
-            {...register('location')}
-          />
-        </div>
-        <div className={styles.textAreaField}>
-          <h5>Description</h5>
-          <textarea
-            placeholder="Enter session description"
-            rows={4}
-            className={styles.descriptionTextarea}
-            {...register('description')}
-          />
-        </div>
-      </section>
-
-      {/* Form with Buttons */}
-      <footer className={styles.footer}>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <div className="d-flex justify-content-between">
-            <Button
-              type="button"
-              variant="secondary"
-              className={styles.backButton}
-              as="a"
-              href="../sessions"
-            >
-              Back
-            </Button>
-            <Button
-              type="button"
-              variant="danger"
-              className={styles.deleteButton}
-              onClick={() => {
-                swal({
-                  title: 'Are you sure?',
-                  text: 'Once deleted, you will not be able to recover this session!',
-                  icon: 'warning',
-                  buttons: ['Cancel', 'Delete'],
-                  dangerMode: true,
-                }).then(async (willDelete) => {
-                  await deleteSession(parseInt(id as string, 10));
-                  if (willDelete) {
-                    swal('Your session has been deleted!', {
-                      icon: 'success',
-                    });
-                  } else {
-                    swal('Cancelled Deletion!');
-                  }
-                });
-              }}
-            >
-              Delete
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              className={styles.submitButton}
-            >
-              Update
-            </Button>
+          <div className={styles.inputFieldContainer}>
+            <h5>Session Location</h5>
+            <input
+              type="text"
+              placeholder="Enter session location"
+              className={styles.inputField}
+              {...register('location')}
+            />
           </div>
-        </Form>
-      </footer>
-    </main>
+          <div className={styles.textAreaField}>
+            <h5>Description</h5>
+            <textarea
+              placeholder="Enter session description"
+              rows={4}
+              className={styles.descriptionTextarea}
+              {...register('description')}
+            />
+          </div>
+        </section>
+
+        {/* Form with Buttons */}
+        <footer className={styles.footer}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <div className="d-flex justify-content-between">
+              <Button
+                type="button"
+                variant="secondary"
+                className={styles.backButton}
+                as="a"
+                href="../sessions"
+              >
+                Back
+              </Button>
+              <Button
+                type="button"
+                variant="danger"
+                className={styles.deleteButton}
+                onClick={() => {
+                  swal({
+                    title: 'Are you sure?',
+                    text: 'Once deleted, you will not be able to recover this session!',
+                    icon: 'warning',
+                    buttons: ['Cancel', 'Delete'],
+                    dangerMode: true,
+                  }).then(async (willDelete) => {
+                    await deleteSession(parseInt(id as string, 10));
+                    if (willDelete) {
+                      swal('Your session has been deleted!', {
+                        icon: 'success',
+                      });
+                    } else {
+                      swal('Cancelled Deletion!');
+                    }
+                  });
+                }}
+              >
+                Delete
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                className={styles.submitButton}
+              >
+                Update
+              </Button>
+            </div>
+          </Form>
+        </footer>
+      </main>
+    </Suspense>
   );
 };
 
