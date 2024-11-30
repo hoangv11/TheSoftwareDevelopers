@@ -9,6 +9,7 @@ import swal from 'sweetalert';
 import {
   getSessionById,
   updateSession,
+  deleteSession,
 } from '../../lib/dbActions';
 import styles from '../../styles/sessionpage.module.css';
 
@@ -217,6 +218,7 @@ const EditSession = () => {
                   buttons: ['Cancel', 'Delete'],
                   dangerMode: true,
                 }).then(async (willDelete) => {
+                  await deleteSession(parseInt(id as string, 10));
                   if (willDelete) {
                     swal('Your session has been deleted!', {
                       icon: 'success',
