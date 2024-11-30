@@ -6,7 +6,10 @@ import { useForm, Controller } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
 import { Form, Button } from 'react-bootstrap';
 import swal from 'sweetalert';
-import { getSessionById, updateSession } from '../../lib/dbActions';
+import {
+  getSessionById,
+  updateSession,
+} from '../../lib/dbActions';
 import styles from '../../styles/sessionpage.module.css';
 
 interface FormData {
@@ -203,18 +206,32 @@ const EditSession = () => {
               Back
             </Button>
             <Button
+              type="button"
               variant="danger"
-              as="a"
-              href="../sessions"
-              className={styles.submitButton}
+              className={styles.deleteButton}
+              onClick={() => {
+                swal({
+                  title: 'Are you sure?',
+                  text: 'Once deleted, you will not be able to recover this session!',
+                  icon: 'warning',
+                  buttons: ['Cancel', 'Delete'],
+                  dangerMode: true,
+                }).then(async (willDelete) => {
+                  if (willDelete) {
+                    swal('Your session has been deleted!', {
+                      icon: 'success',
+                    });
+                  } else {
+                    swal('Cancelled Deletion!');
+                  }
+                });
+              }}
             >
               Delete
             </Button>
             <Button
               type="submit"
               variant="primary"
-              as="a"
-              href="../sessions"
               className={styles.submitButton}
             >
               Update

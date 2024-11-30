@@ -181,6 +181,8 @@ export async function updateSession(
       },
     },
   });
+
+  return redirect('/sessions');
 }
 
 export async function getSessionById(id: number) {
