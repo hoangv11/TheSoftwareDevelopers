@@ -16,12 +16,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ search, setSearch }) => {
     <div
       style={{
         width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        margin: '20px 0',
       }}
     >
       <div
         style={{
-          position: 'relative',
+          display: 'flex',
           width: '100%',
+          maxWidth: '1000px',
         }}
       >
         <input
@@ -30,12 +34,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ search, setSearch }) => {
           value={search}
           onChange={handleChange}
           style={{
+            flex: 1,
             backgroundColor: 'white',
-            borderColor: 'rgba(180, 156, 200, 0.5)',
+            border: '1px solid rgba(180, 156, 200, 0.5)',
             borderRadius: '25px 0 0 25px',
             height: '50px',
             fontSize: '16px',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            paddingLeft: '15px',
+            outline: 'none',
           }}
         />
         <Button
@@ -43,13 +50,22 @@ const SearchBar: React.FC<SearchBarProps> = ({ search, setSearch }) => {
           style={{
             backgroundColor: '#b49cc8',
             color: 'white',
-            borderColor: 'rgba(180, 156, 200, 0.5)',
+            border: '1px solid rgba(180, 156, 200, 0.5)',
             borderRadius: '0 25px 25px 0',
             height: '50px',
             width: '60px',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
+            borderLeft: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease',
+          }}
+          onMouseOver={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#9c7eb0';
+          }}
+          onMouseOut={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#b49cc8';
           }}
         >
           <Search size={24} />

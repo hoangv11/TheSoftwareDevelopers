@@ -162,13 +162,53 @@ export async function createSession(studySession: StudySession) {
   return redirect('/mysessions');
 }
 
-export async function updateSession(studySessionId: number, userId: number) {
+export async function updateSession(
+  studySessionId: number,
+  studySession: Partial<StudySession>,
+) {
   await prisma.studySession.update({
     where: { id: studySessionId },
     data: {
+      title: studySession.title,
+      description: studySession.description,
+      course: studySession.course,
+      location: studySession.location,
+      sessionDate: studySession.sessionDate,
+      startTime: studySession.startTime,
+      endTime: studySession.endTime,
       user: {
-        connect: { id: userId },
+        connect: { id: studySession.userId },
       },
     },
   });
+
+  return redirect('/sessions');
+}
+
+export async function getSessionById(id: number) {
+  return prisma.studySession.findUnique({
+    where: { id },
+    include: {
+      owner: {
+        select: {
+          id: true,
+          profile: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+export async function deleteSession(id: number) {
+  // console.log(`deleteStuff id: ${id}`);
+  await prisma.studySession.delete({
+    where: { id },
+  });
+  // After deleting, redirect to the list page
+  redirect('/sessions');
 }

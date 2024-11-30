@@ -1,62 +1,86 @@
 'use client';
 
-import { Form, Button } from 'react-bootstrap';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { createSession } from '@/lib/dbActions';
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
-import DatePicker from 'react-datepicker';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
-import { CreateSessionSchema } from '@/lib/validationSchemas';
+import DatePicker from 'react-datepicker';
+import { Form, Button } from 'react-bootstrap';
 import swal from 'sweetalert';
-import 'react-datepicker/dist/react-datepicker.css';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import {
+  getSessionById,
+  updateSession,
+  deleteSession,
+} from '../../lib/dbActions';
 import styles from '../../styles/sessionpage.module.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
-const onSubmit = async (
-  data: {
-    title: string;
-    description: string;
-    course: string;
-    location: string;
-    sessionDate: Date;
-    startTime: Date;
-    endTime: Date;
-  },
-  session: any,
-) => {
-  // console.log(`onSubmit data: ${JSON.stringify(data, null, 2)}`);
-  const userId = parseInt(session?.user?.id, 10);
-  await createSession({
-    ...data,
-    added: true,
-    userId,
-    id: userId,
-  });
+interface FormData {
+  title: string;
+  description: string;
+  course: string;
+  location: string;
+  sessionDate: Date;
+  startTime: Date;
+  endTime: Date;
+}
 
-  swal('Success', 'Created Session', 'success', {
-    timer: 1000,
-  });
-};
+interface Session {
+  id: number;
+  title: string;
+  description: string;
+  course: string;
+  location: string;
+  sessionDate: Date;
+  startTime: Date;
+  endTime: Date;
+  userId: number;
+}
 
-const CreateSession: React.FC = () => {
-  const { data: session, status } = useSession();
-  // console.log('AddStuffForm', status, session);
-  const { register, handleSubmit, control } = useForm({
-    resolver: yupResolver(CreateSessionSchema),
-  });
-  if (status === 'loading') {
-    return <LoadingSpinner />;
-  }
-  if (status === 'unauthenticated') {
-    redirect('/auth/signin');
-  }
+const EditSession = () => {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+  const [session, setSession] = useState<Session | null>(null);
+  const { register, handleSubmit, control, setValue } = useForm<FormData>();
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      if (!id) return;
+
+      const sessionData = await getSessionById(parseInt(id, 10));
+
+      if (!sessionData) return;
+
+      setSession(sessionData);
+      setValue('title', sessionData.title);
+      setValue('description', sessionData.description);
+      setValue('course', sessionData.course);
+      setValue('location', sessionData.location);
+      setValue('sessionDate', new Date(sessionData.sessionDate));
+      setValue('startTime', new Date(sessionData.startTime));
+      setValue('endTime', new Date(sessionData.endTime));
+    };
+
+    fetchSession();
+  }, [id, setValue]);
+
+  const onSubmit = async (data: FormData) => {
+    if (!id || !session) return;
+
+    await updateSession(parseInt(id, 10), {
+      ...data,
+      userId: session.userId,
+    });
+
+    swal('Success', 'Session Updated', 'success', {
+      timer: 1500,
+    });
+  };
 
   return (
     <main className={styles.container}>
       {/* Header */}
       <section className={styles.header}>
-        <h1>Create a New Session</h1>
+        <h1>Edit Session</h1>
         <p>Fill in the details below to schedule a new session.</p>
       </section>
 
@@ -172,7 +196,7 @@ const CreateSession: React.FC = () => {
 
       {/* Form with Buttons */}
       <footer className={styles.footer}>
-        <Form onSubmit={handleSubmit((data) => onSubmit(data, session))}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
           <div className="d-flex justify-content-between">
             <Button
               type="button"
@@ -184,11 +208,36 @@ const CreateSession: React.FC = () => {
               Back
             </Button>
             <Button
+              type="button"
+              variant="danger"
+              className={styles.deleteButton}
+              onClick={() => {
+                swal({
+                  title: 'Are you sure?',
+                  text: 'Once deleted, you will not be able to recover this session!',
+                  icon: 'warning',
+                  buttons: ['Cancel', 'Delete'],
+                  dangerMode: true,
+                }).then(async (willDelete) => {
+                  await deleteSession(parseInt(id as string, 10));
+                  if (willDelete) {
+                    swal('Your session has been deleted!', {
+                      icon: 'success',
+                    });
+                  } else {
+                    swal('Cancelled Deletion!');
+                  }
+                });
+              }}
+            >
+              Delete
+            </Button>
+            <Button
               type="submit"
               variant="primary"
               className={styles.submitButton}
             >
-              Submit
+              Update
             </Button>
           </div>
         </Form>
@@ -197,4 +246,4 @@ const CreateSession: React.FC = () => {
   );
 };
 
-export default CreateSession;
+export default EditSession;
