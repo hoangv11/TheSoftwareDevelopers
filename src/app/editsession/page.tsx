@@ -12,6 +12,7 @@ import {
   deleteSession,
 } from '../../lib/dbActions';
 import styles from '../../styles/sessionpage.module.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 interface FormData {
   title: string;
