@@ -164,7 +164,7 @@ export async function createSession(studySession: StudySession) {
 
 export async function updateSession(
   studySessionId: number,
-  studySession: Partial<StudySession>,
+  studySession: Partial<StudySession> & { disconnect?: boolean },
 ) {
   await prisma.studySession.update({
     where: { id: studySessionId },
@@ -176,9 +176,13 @@ export async function updateSession(
       sessionDate: studySession.sessionDate,
       startTime: studySession.startTime,
       endTime: studySession.endTime,
-      user: {
-        connect: { id: studySession.userId },
-      },
+      user: studySession.disconnect
+        ? {
+          disconnect: { id: studySession.userId },
+        }
+        : {
+          connect: { id: studySession.userId },
+        },
     },
   });
 
