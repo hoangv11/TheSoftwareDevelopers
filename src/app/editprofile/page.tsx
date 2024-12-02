@@ -1,6 +1,15 @@
 'use client';
 
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import AWS from 'aws-sdk';
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  Image,
+} from 'react-bootstrap';
 import '../../styles/editProfile.css';
 import swal from 'sweetalert';
 import { useSession } from 'next-auth/react';
@@ -10,19 +19,26 @@ import { redirect } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { EditProfileSchema } from '@/lib/validationSchemas';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { ChangeEvent } from 'react';
+import { useState, ChangeEvent } from 'react';
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+  region: process.env.NEXT_PUBLIC_AWS_REGION,
+  params: { Bucket: process.env.NEXT_PUBLIC_S3_BUCKET },
+});
 
 const onSubmit = async (
   data: {
-    profilePictureUrl: string;
     firstName: string;
     lastName: string;
     major: string;
     bio: string;
+    profilePictureUrl: string;
   },
   session: any,
 ) => {
-  const userId = parseInt(session?.user?.id, 10); // Assuming userId is available in session
+  const userId = parseInt(session?.user?.id, 10);
   await createProfile({ ...data, userId, id: userId });
 
   swal('Success', 'Profile created successfully!', 'success', {
@@ -32,9 +48,13 @@ const onSubmit = async (
 
 const EditProfile: React.FC = () => {
   const { data: session, status } = useSession();
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
+    null,
+  );
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(EditProfileSchema),
@@ -48,12 +68,30 @@ const EditProfile: React.FC = () => {
     redirect('/auth/signin');
   }
 
-  function handleImageUpload(event: ChangeEvent<HTMLInputElement>): void {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {};
-      reader.readAsDataURL(file);
+  function handleImageUpload(e: ChangeEvent<HTMLInputElement>): void {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      const uploadParams = {
+        Bucket: 'study-buddy-images', // Your S3 bucket name
+        Key: `public/${file.name}`,
+        Body: file,
+        ContentType: file.type,
+      };
+
+      s3.upload(
+        uploadParams,
+        (err: Error, data: AWS.S3.ManagedUpload.SendData) => {
+          if (err) {
+            console.error('Error uploading image:', err);
+          } else {
+            console.log('Image uploaded successfully:', data.Location);
+            // Update the profilePicUrl field with the image URL
+            setValue('profilePictureUrl', data.Location);
+            setProfilePictureUrl(data.Location);
+          }
+        },
+      );
     }
   }
 
@@ -67,6 +105,11 @@ const EditProfile: React.FC = () => {
               <Card.Body>
                 <div className="profile-image-section">
                   <div className="profile-image">
+                    {profilePictureUrl ? (
+                      <Image src={profilePictureUrl} alt="Profile" className="uploaded-image" />
+                    ) : (
+                      <div>No image uploaded</div>
+                    )}
                     <Button
                       className="add-icon-circle"
                       onClick={() => document.getElementById('profileImageInput')?.click()}
