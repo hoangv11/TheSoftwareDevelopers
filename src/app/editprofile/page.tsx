@@ -1,6 +1,6 @@
 'use client';
 
-import AWS from 'aws-sdk';
+import s3 from '@/lib/s3';
 import {
   Container,
   Row,
@@ -20,13 +20,6 @@ import { useForm } from 'react-hook-form';
 import { EditProfileSchema } from '@/lib/validationSchemas';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useState, ChangeEvent } from 'react';
-
-const s3 = new AWS.S3({
-  accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
-  region: process.env.NEXT_PUBLIC_AWS_REGION,
-  params: { Bucket: process.env.NEXT_PUBLIC_S3_BUCKET },
-});
 
 const onSubmit = async (
   data: {
@@ -73,7 +66,7 @@ const EditProfile: React.FC = () => {
       const file = e.target.files[0];
 
       const uploadParams = {
-        Bucket: 'study-buddy-images', // Your S3 bucket name
+        Bucket: process.env.NEXT_PUBLIC_S3_BUCKET!,
         Key: `public/${file.name}`,
         Body: file,
         ContentType: file.type,
@@ -106,7 +99,11 @@ const EditProfile: React.FC = () => {
                 <div className="profile-image-section">
                   <div className="profile-image">
                     {profilePictureUrl ? (
-                      <Image src={profilePictureUrl} alt="Profile" className="uploaded-image" />
+                      <Image
+                        src={profilePictureUrl}
+                        alt="Profile"
+                        className="uploaded-image"
+                      />
                     ) : (
                       <div>No image uploaded</div>
                     )}

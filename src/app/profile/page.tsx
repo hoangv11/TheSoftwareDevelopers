@@ -2,12 +2,11 @@ import { Profile } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import React from 'react';
-import Image from 'next/image';
 import '../../styles/profilepage.css';
 import { Star as StarIcon, GraduationCap, Clock } from 'lucide-react';
 import authOptions from '@/lib/auth';
 import Link from 'next/link';
-import { Button } from 'react-bootstrap';
+import { Button, Image } from 'react-bootstrap';
 
 const MyProfile = async () => {
   const session = await getServerSession(authOptions);
@@ -33,13 +32,18 @@ const MyProfile = async () => {
     <div className="container">
       {/* Profile Header */}
       <div className="profile-header">
-        <Image
-          src="/pfp1.png"
-          alt="profile picture"
-          className="profile-picture"
-          width={150}
-          height={150}
-        />
+        {profiles
+          .filter(
+            (profile) => profile.userId === parseInt(userSession.user?.id, 10),
+          )
+          .map((profile) => (
+            <Image
+              key={profile.userId}
+              src={profile.profilePictureUrl || ''}
+              roundedCircle
+              className="profile-picture"
+            />
+          ))}
         <div className="profile-info">
           <h1 className="profile-name">{`${userProfile.firstName} ${userProfile.lastName}`}</h1>
           <p className="profile-major">{userProfile.major}</p>
