@@ -17,6 +17,9 @@ type ExtendedStudySession = StudySession & {
       lastName: string;
     };
   };
+  user: {
+    id: number;
+  }[];
 };
 
 const SessionCard = ({
@@ -155,21 +158,22 @@ const SessionCard = ({
                   >
                     Edit Session
                   </Button>
-                ) : session.added ? (
-                  <Button
-                    className="requestBtn mt-3"
-                    onClick={() => removeAddedSession(session)}
-                  >
-                    Remove Session
-                  </Button>
-                ) : (
-                  <Button
-                    className="requestBtn mt-3"
-                    onClick={() => addNewSession(session)}
-                  >
-                    Add Session
-                  </Button>
-                )}
+                ) : (session.user?.some((user) => user.id === currentUser)
+                  ?? false) ? (
+                    <Button
+                      className="requestBtn mt-3"
+                      onClick={() => removeAddedSession(session)}
+                    >
+                      Remove Session
+                    </Button>
+                  ) : (
+                    <Button
+                      className="requestBtn mt-3"
+                      onClick={() => addNewSession(session)}
+                    >
+                      Add Session
+                    </Button>
+                  )}
               </Card.Body>
             </Card>
           </div>

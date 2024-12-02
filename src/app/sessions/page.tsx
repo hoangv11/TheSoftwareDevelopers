@@ -14,6 +14,9 @@ type ExtendedStudySession = StudySession & {
       lastName: string;
     };
   };
+  user: {
+    id: number;
+  }[];
 };
 
 const SessionsPage = async () => {
@@ -39,6 +42,11 @@ const SessionsPage = async () => {
               lastName: true,
             },
           },
+        },
+      },
+      user: {
+        select: {
+          id: true,
         },
       },
     },
