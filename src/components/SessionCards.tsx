@@ -45,6 +45,25 @@ const SessionCard = ({
       timer: 1500,
     });
   };
+  const removeAddedSession = async (studySession: ExtendedStudySession) => {
+    await updateSession(studySession.id, {
+      id: studySession.id,
+      title: studySession.title,
+      description: studySession.description,
+      course: studySession.course,
+      location: studySession.location,
+      sessionDate: studySession.sessionDate,
+      startTime: studySession.startTime,
+      endTime: studySession.endTime,
+      added: false,
+      userId: currentUser,
+      disconnect: true,
+    });
+
+    swal('Success', 'Session Removed', 'success', {
+      timer: 1500,
+    });
+  };
 
   const searchFilter = sessions.filter((session) => {
     const firstName = session.owner.profile?.firstName ?? '';
@@ -128,12 +147,20 @@ const SessionCard = ({
                     <span className="detail-value">{session.location}</span>
                   </div>
                 </div>
+                {/* eslint-disable-next-line no-nested-ternary */}
                 {session.owner.id === currentUser ? (
                   <Button
                     href={`/editsession?id=${session.id}`}
                     className="requestBtn mt-3"
                   >
                     Edit Session
+                  </Button>
+                ) : session.added ? (
+                  <Button
+                    className="requestBtn mt-3"
+                    onClick={() => removeAddedSession(session)}
+                  >
+                    Remove Session
                   </Button>
                 ) : (
                   <Button

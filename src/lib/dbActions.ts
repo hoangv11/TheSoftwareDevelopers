@@ -115,6 +115,7 @@ export async function createProfile(profile: Profile) {
     await prisma.profile.update({
       where: { userId: profile.userId },
       data: {
+        profilePictureUrl: profile.profilePictureUrl,
         firstName: profile.firstName,
         lastName: profile.lastName,
         major: profile.major,
@@ -125,6 +126,7 @@ export async function createProfile(profile: Profile) {
     // If profile does not exist, create a new one
     await prisma.profile.create({
       data: {
+        profilePictureUrl: profile.profilePictureUrl,
         userId: profile.userId,
         firstName: profile.firstName,
         lastName: profile.lastName,
@@ -164,7 +166,7 @@ export async function createSession(studySession: StudySession) {
 
 export async function updateSession(
   studySessionId: number,
-  studySession: Partial<StudySession>,
+  studySession: Partial<StudySession> & { disconnect?: boolean },
 ) {
   await prisma.studySession.update({
     where: { id: studySessionId },
@@ -176,9 +178,14 @@ export async function updateSession(
       sessionDate: studySession.sessionDate,
       startTime: studySession.startTime,
       endTime: studySession.endTime,
-      user: {
-        connect: { id: studySession.userId },
-      },
+      added: studySession.added,
+      user: studySession.disconnect
+        ? {
+          disconnect: { id: studySession.userId },
+        }
+        : {
+          connect: { id: studySession.userId },
+        },
     },
   });
 
