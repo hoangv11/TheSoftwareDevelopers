@@ -10,9 +10,16 @@ import { redirect } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { EditProfileSchema } from '@/lib/validationSchemas';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { ChangeEvent } from 'react';
 
 const onSubmit = async (
-  data: { firstName: string; lastName: string; major: string; bio: string },
+  data: {
+    profilePictureUrl: string;
+    firstName: string;
+    lastName: string;
+    major: string;
+    bio: string;
+  },
   session: any,
 ) => {
   const userId = parseInt(session?.user?.id, 10); // Assuming userId is available in session
@@ -41,6 +48,15 @@ const EditProfile: React.FC = () => {
     redirect('/auth/signin');
   }
 
+  function handleImageUpload(event: ChangeEvent<HTMLInputElement>): void {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {};
+      reader.readAsDataURL(file);
+    }
+  }
+
   return (
     <div className="edit-profile-container">
       <h1 className="title">Edit Profile</h1>
@@ -51,9 +67,19 @@ const EditProfile: React.FC = () => {
               <Card.Body>
                 <div className="profile-image-section">
                   <div className="profile-image">
-                    <div className="add-icon-circle">
+                    <Button
+                      className="add-icon-circle"
+                      onClick={() => document.getElementById('profileImageInput')?.click()}
+                    >
                       <span className="add-icon">+</span>
-                    </div>
+                    </Button>
+                    <input
+                      id="profileImageInput"
+                      type="file"
+                      accept="image/png, image/jpeg, image/jpg"
+                      style={{ display: 'none' }}
+                      onChange={handleImageUpload}
+                    />
                   </div>
                 </div>
                 <Form
