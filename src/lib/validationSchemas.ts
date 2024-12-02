@@ -28,7 +28,6 @@ export const EditProfileSchema = Yup.object({
 });
 
 export const CreateSessionSchema = Yup.object({
-  profilePictureUrl: Yup.string().required(),
   title: Yup.string().required(),
   course: Yup.string().required(),
   description: Yup.string().required(),
