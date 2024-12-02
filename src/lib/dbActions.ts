@@ -176,6 +176,7 @@ export async function updateSession(
       sessionDate: studySession.sessionDate,
       startTime: studySession.startTime,
       endTime: studySession.endTime,
+      added: studySession.added,
       user: studySession.disconnect
         ? {
           disconnect: { id: studySession.userId },

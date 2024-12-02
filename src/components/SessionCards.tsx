@@ -147,12 +147,20 @@ const SessionCard = ({
                     <span className="detail-value">{session.location}</span>
                   </div>
                 </div>
+                {/* eslint-disable-next-line no-nested-ternary */}
                 {session.owner.id === currentUser ? (
                   <Button
                     href={`/editsession?id=${session.id}`}
                     className="requestBtn mt-3"
                   >
                     Edit Session
+                  </Button>
+                ) : session.added ? (
+                  <Button
+                    className="requestBtn mt-3"
+                    onClick={() => removeAddedSession(session)}
+                  >
+                    Remove Session
                   </Button>
                 ) : (
                   <Button
