@@ -219,3 +219,27 @@ export async function deleteSession(id: number) {
   // After deleting, redirect to the list page
   redirect('/sessions');
 }
+
+export async function getProfile(userId: number | string) {
+  const parsedUserId = typeof userId === 'string' ? parseInt(userId, 10) : userId;
+
+  try {
+    const profile = await prisma.profile.findUnique({
+      where: {
+        userId: parsedUserId,
+      },
+      select: {
+        firstName: true,
+        lastName: true,
+        major: true,
+        bio: true,
+        userId: true,
+        profilePictureUrl: true,
+      },
+    });
+    return profile;
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    return null;
+  }
+}

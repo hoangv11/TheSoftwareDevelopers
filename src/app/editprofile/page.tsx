@@ -14,12 +14,12 @@ import '../../styles/editProfile.css';
 import swal from 'sweetalert';
 import { useSession } from 'next-auth/react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { createProfile } from '@/lib/dbActions';
+import { createProfile, getProfile } from '@/lib/dbActions';
 import { redirect } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { EditProfileSchema } from '@/lib/validationSchemas';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { useState, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 
 const onSubmit = async (
   data: {
@@ -41,6 +41,7 @@ const onSubmit = async (
 
 const EditProfile: React.FC = () => {
   const { data: session, status } = useSession();
+  const [isLoading, setIsLoading] = useState(true);
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
     null,
   );
@@ -51,9 +52,53 @@ const EditProfile: React.FC = () => {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(EditProfileSchema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      major: '',
+      bio: '',
+      profilePictureUrl: '',
+    },
   });
 
-  if (status === 'loading') {
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        // Use type assertion to handle the any type
+        const userId = session?.user && 'id' in session.user
+          ? parseInt((session.user as any).id, 10)
+          : null;
+
+        if (userId) {
+          const profileData = await getProfile(userId);
+
+          if (profileData) {
+            // Populate form fields
+            if (profileData.profilePictureUrl) {
+              setValue('profilePictureUrl', profileData.profilePictureUrl);
+              setProfilePictureUrl(profileData.profilePictureUrl);
+            }
+
+            setValue('firstName', profileData.firstName || '');
+            setValue('lastName', profileData.lastName || '');
+            setValue('major', profileData.major || '');
+            setValue('bio', profileData.bio || '');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        swal('Error', 'Failed to load profile', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (status === 'authenticated') {
+      fetchProfile();
+    }
+  }, [session, setValue, status]);
+
+  if (status === 'loading' || isLoading) {
     return <LoadingSpinner />;
   }
 
@@ -79,7 +124,6 @@ const EditProfile: React.FC = () => {
             console.error('Error uploading image:', err);
           } else {
             console.log('Image uploaded successfully:', data.Location);
-            // Update the profilePicUrl field with the image URL
             setValue('profilePictureUrl', data.Location);
             setProfilePictureUrl(data.Location);
           }
@@ -105,7 +149,7 @@ const EditProfile: React.FC = () => {
                         className="uploaded-image"
                       />
                     ) : (
-                      <div>No image uploaded</div>
+                      <div />
                     )}
                     <Button
                       className="add-icon-circle"
