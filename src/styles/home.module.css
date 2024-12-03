@@ -1,0 +1,85 @@
+.landingPage {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #4a90e2, #9013fe);
+  color: #ffffff;
+  font-family: 'Arial', sans-serif;
+  overflow: hidden;
+}
+
+.fadeContainer {
+  text-align: center;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  line-height: 1.2;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.title.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.content {
+  margin-top: 2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.content.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #e0e0e0;
+}
+
+.buttonGroup {
+  margin-top: 2rem;
+}
+
+.primaryButton {
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  background-color: #ffc107;
+  color: #000;
+  border: none;
+  transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.primaryButton:hover {
+  transform: scale(1.05);
+  background-color: #ffca28;
+}
+
+.secondaryButton {
+  margin-left: 15px;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  color: #ffffff;
+  border: 2px solid #ffc107;
+  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.secondaryButton:hover {
+  transform: scale(1.05);
+  color: #ffc107;
+  background-color: transparent;
+}
+
+.brand {
+    color: #ffc107;
+    font-weight: bold;
+}

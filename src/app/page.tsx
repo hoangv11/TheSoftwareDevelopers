@@ -1,38 +1,50 @@
-/* eslint-disable max-len */
-import { Col, Image, Row, Button } from 'react-bootstrap';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Button } from 'react-bootstrap';
+import styles from '../styles/home.module.css';
 
 /** The Landing page. */
-const Home = () => (
-  <main id="landing-page" className="vh-100 d-flex">
-    <Row className="w-100 m-0">
-      {/* Text Section */}
-      <Col xs={6} className="d-flex flex-column justify-content-center align-items-center text-center p-5">
-        <h1>ICStudy</h1>
-        <p>
-          Welcome to ICStudy, the ultimate tool for ICS students to connect, collaborate, and conquer coursework together! Whether you&apos;re looking for a group to brainstorm a project, tackle a tough assignment, or simply get some advice, ICStudy makes it easy to find peers ready to help or learn. Join the community where every student can be a teacher and a learner, all within the comfort and familiarity of the ICS spaces on campus. Get started by signing up or logging in!
-        </p>
-        {/* Buttons */}
-        <div className="mt-4">
-          <Button variant="primary" href="/auth/signin" className="me-3">
-            Log in
-          </Button>
-          <Button variant="dark" href="/auth/signup">
-            Sign up
-          </Button>
-        </div>
-      </Col>
+const Home = () => {
+  const [titleVisible, setTitleVisible] = useState(false);
+  const [contentVisible, setContentVisible] = useState(false);
 
-      {/* Image Section */}
-      <Col xs={6} className="d-flex justify-content-center align-items-center p-5">
-        <Image
-          src="/POSTbuilding.png"
-          alt="Home Image"
-          className="h-100 w-100"
-          style={{ objectFit: 'contain', maxWidth: '50vw' }}
-        />
-      </Col>
-    </Row>
-  </main>
-);
+  useEffect(() => {
+    const titleTimer = setTimeout(() => setTitleVisible(true), 500);
+    const contentTimer = setTimeout(() => setContentVisible(true), 1500);
+    return () => {
+      clearTimeout(titleTimer);
+      clearTimeout(contentTimer);
+    };
+  }, []);
+
+  return (
+    <main className={styles.landingPage}>
+      <div className={styles.fadeContainer}>
+        {/* Title Section */}
+        <h1 className={`${styles.title} ${titleVisible ? styles.visible : ''}`}>
+          Welcome to
+          {' '}
+          <span className={styles.brand}>ICStudy</span>
+        </h1>
+
+        {/* Subtitle and Buttons Section */}
+        <div className={`${styles.content} ${contentVisible ? styles.visible : ''}`}>
+          <p className={styles.subtitle}>
+            Join a vibrant community of learners. Collaborate, connect, and achieve more together.
+          </p>
+          <div className={styles.buttonGroup}>
+            <Button variant="primary" href="/auth/signin" className={styles.primaryButton}>
+              Log In
+            </Button>
+            <Button variant="outline-light" href="/auth/signup" className={styles.secondaryButton}>
+              Sign Up
+            </Button>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+};
 
 export default Home;
