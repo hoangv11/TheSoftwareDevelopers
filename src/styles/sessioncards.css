@@ -2,10 +2,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   border: 2px solid rgba(180, 156, 200, 0.5);
   border-radius: 25px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  padding: 15px;
+  padding: 5px;
   width: 340px;
   height: 430px;
   background: linear-gradient(145deg, #f7e7d6, #f7e7d6);
@@ -20,14 +21,13 @@
 }
 
 .sessionCard {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-  perspective: 1000px;
-  display: contents;
+  display: grid;
+  grid-template-columns: repeat(4, 340px); /* Four columns */
+  justify-content: center; /* Center the grid */
+  gap: 30px; /* Space between cards */
+  max-width: 1500px; /* Container max width */
+  margin: 0 auto; /* Center the grid container */
+  padding: 20px 0; /* Optional vertical padding */
 }
 
 .sessionCardCont {

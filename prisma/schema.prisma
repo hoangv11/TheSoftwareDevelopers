@@ -20,13 +20,14 @@ model User {
 }
 
 model Profile {
-  id        Int    @id @default(autoincrement())
-  firstName String
-  lastName  String
-  major     String
-  bio       String
-  userId    Int    @unique
-  user      User   @relation(fields: [userId], references: [id])
+  id                Int    @id @default(autoincrement())
+  profilePictureUrl String
+  firstName         String
+  lastName          String
+  major             String
+  bio               String
+  userId            Int    @unique
+  user              User   @relation(fields: [userId], references: [id])
 }
 
 model StudySession {

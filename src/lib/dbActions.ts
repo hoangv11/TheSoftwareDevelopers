@@ -115,6 +115,7 @@ export async function createProfile(profile: Profile) {
     await prisma.profile.update({
       where: { userId: profile.userId },
       data: {
+        profilePictureUrl: profile.profilePictureUrl,
         firstName: profile.firstName,
         lastName: profile.lastName,
         major: profile.major,
@@ -125,6 +126,7 @@ export async function createProfile(profile: Profile) {
     // If profile does not exist, create a new one
     await prisma.profile.create({
       data: {
+        profilePictureUrl: profile.profilePictureUrl,
         userId: profile.userId,
         firstName: profile.firstName,
         lastName: profile.lastName,
@@ -162,13 +164,94 @@ export async function createSession(studySession: StudySession) {
   return redirect('/mysessions');
 }
 
-export async function updateSession(studySessionId: number, userId: number) {
+export async function updateSession(
+  studySessionId: number,
+  studySession: Partial<StudySession> & { disconnect?: boolean },
+) {
   await prisma.studySession.update({
     where: { id: studySessionId },
     data: {
-      user: {
-        connect: { id: userId },
+      title: studySession.title,
+      description: studySession.description,
+      course: studySession.course,
+      location: studySession.location,
+      sessionDate: studySession.sessionDate,
+      startTime: studySession.startTime,
+      endTime: studySession.endTime,
+      added: studySession.added,
+      user: studySession.disconnect
+        ? {
+          disconnect: { id: studySession.userId },
+        }
+        : {
+          connect: { id: studySession.userId },
+        },
+    },
+  });
+
+  return redirect('/sessions');
+}
+
+export async function getSessionById(id: number) {
+  return prisma.studySession.findUnique({
+    where: { id },
+    include: {
+      owner: {
+        select: {
+          id: true,
+          profile: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
       },
     },
   });
 }
+
+export async function deleteSession(id: number) {
+  // console.log(`deleteStuff id: ${id}`);
+  await prisma.studySession.delete({
+    where: { id },
+  });
+  // After deleting, redirect to the list page
+  redirect('/sessions');
+}
+
+export async function getProfile(userId: number | string) {
+  const parsedUserId = typeof userId === 'string' ? parseInt(userId, 10) : userId;
+
+  try {
+    const profile = await prisma.profile.findUnique({
+      where: {
+        userId: parsedUserId,
+      },
+      select: {
+        firstName: true,
+        lastName: true,
+        major: true,
+        bio: true,
+        userId: true,
+        profilePictureUrl: true,
+      },
+    });
+    return profile;
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    return null;
+  }
+}
+
+export const checkIfEmailExists = async (email: string) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    return !!user;
+  } catch (error) {
+    console.error('Error checking email:', error);
+    return false;
+  }
+};

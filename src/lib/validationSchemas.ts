@@ -24,6 +24,7 @@ export const EditProfileSchema = Yup.object({
   lastName: Yup.string().required(),
   major: Yup.string().required(),
   bio: Yup.string().required(),
+  profilePictureUrl: Yup.string().required(),
 });
 
 export const CreateSessionSchema = Yup.object({
@@ -33,5 +34,5 @@ export const CreateSessionSchema = Yup.object({
   location: Yup.string().required(),
   sessionDate: Yup.date().required(),
   startTime: Yup.date().required(),
-  endTime: Yup.date().required(),
+  endTime: Yup.date().required().min(Yup.ref('startTime')),
 });

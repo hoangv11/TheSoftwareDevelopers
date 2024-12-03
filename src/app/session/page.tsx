@@ -34,7 +34,7 @@ const onSubmit = async (
     id: userId,
   });
 
-  swal('Success', 'created session', 'success', {
+  swal('Success', 'Created Session', 'success', {
     timer: 1000,
   });
 };
@@ -75,6 +75,7 @@ const CreateSession: React.FC = () => {
                 dateFormat="MMMM d, yyyy"
                 className={styles.inputField}
                 placeholderText="Select session date"
+                todayButton="Today"
               />
             )}
           />
@@ -177,10 +178,8 @@ const CreateSession: React.FC = () => {
               type="button"
               variant="secondary"
               className={styles.backButton}
-              onClick={() => {
-                console.log('Back button clicked');
-                // Handle back action
-              }}
+              as="a"
+              href="../sessions"
             >
               Back
             </Button>

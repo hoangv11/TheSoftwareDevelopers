@@ -21,12 +21,21 @@ const NavBar: React.FC = () => {
   return (
     <Navbar bg="light" expand="lg">
       <Container>
-        <Navbar.Brand href="/">ICStudy</Navbar.Brand>
+        {/* Change ICStudy brand link to UserHomePage when logged in */}
+        <Navbar.Brand href={currentUser ? '/userHome' : '/'}>ICStudy</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto justify-content-start">
             {currentUser && (
               <>
+                {/* Home link for logged in user */}
+                <Nav.Link
+                  id="home-nav"
+                  href="/userHome"
+                  active={pathName === '/userHome'}
+                >
+                  Home
+                </Nav.Link>
                 <Nav.Link
                   id="find-session-nav"
                   href="/sessions"

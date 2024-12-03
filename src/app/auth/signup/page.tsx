@@ -1,21 +1,26 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
+import React, { useState } from 'react';
+import styles from '@/styles/signup.module.css';
+import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
-import { Card, Col, Container, Button, Form, Row } from 'react-bootstrap';
-import { createUser } from '@/lib/dbActions';
+import { createUser, checkIfEmailExists } from '@/lib/dbActions';
+import { signIn } from 'next-auth/react';
 
 type SignUpForm = {
   email: string;
   password: string;
   confirmPassword: string;
-  // acceptTerms: boolean;
 };
 
-/** The sign up page. */
 const SignUp = () => {
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
+  const [emailTaken, setEmailTaken] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isValidEmail, setIsValidEmail] = useState(true);
+
   const validationSchema = Yup.object().shape({
     email: Yup.string().required('Email is required').email('Email is invalid'),
     password: Yup.string()
@@ -24,97 +29,168 @@ const SignUp = () => {
       .max(40, 'Password must not exceed 40 characters'),
     confirmPassword: Yup.string()
       .required('Confirm Password is required')
-      .oneOf([Yup.ref('password'), ''], 'Confirm Password does not match'),
+      .oneOf([Yup.ref('password'), ''], 'Passwords must match'),
   });
 
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
+    setValue,
+    setError,
+    clearErrors,
   } = useForm<SignUpForm>({
     resolver: yupResolver(validationSchema),
   });
 
+  // Function to check if email is already taken
+  const checkEmailTaken = async (email: string) => {
+    const exists = await checkIfEmailExists(email);
+    if (exists) {
+      setEmailTaken(true);
+      setError('email', { type: 'manual', message: 'Email is already taken.' });
+    } else {
+      setEmailTaken(false);
+      clearErrors('email');
+    }
+  };
+
+  // Validate email when the user finishes typing (onBlur)
+  const validateEmail = async (value: string) => {
+    setValue('email', value);
+    const isEmailValid = value.endsWith('@hawaii.edu');
+
+    if (!isEmailValid) {
+      setIsValidEmail(false);
+      setError('email', { type: 'manual', message: 'Email must end with @hawaii.edu.' });
+    } else {
+      setIsValidEmail(true);
+      clearErrors('email');
+      await checkEmailTaken(value);
+    }
+  };
+
+  // Handle when the user changes the email field
+  const handleEmailChange = async (value: string) => {
+    setEmailTaken(false);
+    setIsValidEmail(true);
+    clearErrors('email');
+    await checkEmailTaken(value);
+  };
+
+  const handlePasswordBlur = (confirmPassword: string) => {
+    const passwordField = document.getElementById('password') as HTMLInputElement;
+    if (passwordField) {
+      setPasswordsMatch(passwordField.value === confirmPassword);
+    }
+  };
+
   const onSubmit = async (data: SignUpForm) => {
-    // console.log(JSON.stringify(data, null, 2));
+    if (emailTaken) {
+      setError('email', { type: 'manual', message: 'Email is already taken.' });
+      return;
+    }
+
+    setIsSubmitting(true);
+
     await createUser(data);
-    // After creating, signIn with redirect to the add page
     await signIn('credentials', { callbackUrl: '/editprofile', ...data });
+
+    setIsSubmitting(false);
   };
 
   return (
-    <main>
-      <Container>
-        <Row className="justify-content-center">
-          <Col xs={5}>
-            <h1 className="text-center">Sign Up</h1>
-            <Card>
-              <Card.Body>
-                <Form onSubmit={handleSubmit(onSubmit)}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Email</Form.Label>
-                    <input
-                      type="text"
-                      {...register('email')}
-                      className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-                    />
-                    <div className="invalid-feedback">
-                      {errors.email?.message}
-                    </div>
-                  </Form.Group>
+    <div className={styles.container}>
+      <div className={styles.formWrapper}>
+        <h1 className={styles.title}>Sign Up</h1>
 
-                  <Form.Group className="form-group">
-                    <Form.Label>Password</Form.Label>
-                    <input
-                      type="password"
-                      {...register('password')}
-                      className={`form-control ${errors.password ? 'is-invalid' : ''}`}
-                    />
-                    <div className="invalid-feedback">
-                      {errors.password?.message}
-                    </div>
-                  </Form.Group>
-                  <Form.Group className="form-group">
-                    <Form.Label>Confirm Password</Form.Label>
-                    <input
-                      type="password"
-                      {...register('confirmPassword')}
-                      className={`form-control ${errors.confirmPassword ? 'is-invalid' : ''}`}
-                    />
-                    <div className="invalid-feedback">
-                      {errors.confirmPassword?.message}
-                    </div>
-                  </Form.Group>
-                  <Form.Group className="form-group py-3">
-                    <Row>
-                      <Col>
-                        <Button type="submit" className="btn btn-primary">
-                          Register
-                        </Button>
-                      </Col>
-                      <Col>
-                        <Button
-                          type="button"
-                          onClick={() => reset()}
-                          className="btn btn-warning float-right"
-                        >
-                          Reset
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form.Group>
-                </Form>
-              </Card.Body>
-              <Card.Footer>
-                Already have an account?
-                <a href="/auth/signin">Sign in</a>
-              </Card.Footer>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    </main>
+        <p className={styles.descriptionCentered}>
+          Sign up using your @hawaii.edu email
+        </p>
+
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+          {/* Email Field */}
+          <div className={styles.inputGroup}>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label htmlFor="email" className={styles.label}>
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              className={`${styles.input} ${(emailTaken || !isValidEmail) ? styles.invalid : ''}`}
+              {...register('email', { required: 'Email is required' })}
+              onBlur={(e) => validateEmail(e.target.value)}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              required
+            />
+            {(emailTaken || !isValidEmail) && (
+              <p className={styles.error}>
+                {emailTaken ? 'Email is already taken.' : 'Email must end with @hawaii.edu.'}
+              </p>
+            )}
+            {/* Only show react-hook-form error if there's no manual email error */}
+            {!emailTaken && isValidEmail && errors.email && (
+              <p className={styles.error}>{errors.email.message}</p>
+            )}
+          </div>
+
+          {/* Password Field */}
+          <div className={styles.inputGroup}>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label htmlFor="password" className={styles.label}>
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              className={`${styles.input} ${errors.password ? styles.invalid : ''}`}
+              {...register('password')}
+              required
+            />
+            {errors.password && (
+              <p className={styles.error}>{errors.password.message}</p>
+            )}
+          </div>
+
+          {/* Confirm Password Field */}
+          <div className={styles.inputGroup}>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label htmlFor="confirmPassword" className={styles.label}>
+              Recheck Password
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              className={`${styles.input} ${(!passwordsMatch && errors.confirmPassword) ? styles.invalid : ''}`}
+              {...register('confirmPassword')}
+              onBlur={(e) => handlePasswordBlur(e.target.value)}
+              required
+            />
+            {errors.confirmPassword && (
+              <p className={styles.error}>{errors.confirmPassword.message}</p>
+            )}
+            {!passwordsMatch && !errors.confirmPassword && (
+              <p className={styles.error}>Passwords must match.</p>
+            )}
+          </div>
+
+          <button type="submit" className={styles.button} disabled={isSubmitting}>
+            {isSubmitting ? 'Signing Up...' : 'Sign Up'}
+          </button>
+        </form>
+      </div>
+
+      {/* Centered account prompt */}
+      <div className={styles.accountPromptWrapper}>
+        <p>
+          Already have an account?
+          <Link href="/auth/signin" className={styles.signInLink}>
+            Sign In
+          </Link>
+        </p>
+      </div>
+    </div>
   );
 };
 
