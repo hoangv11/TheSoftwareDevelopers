@@ -12,15 +12,15 @@ const FeedbackPage = () => {
     feedback: '',
   });
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Feedback submitted:', formData);
   };
@@ -33,6 +33,7 @@ const FeedbackPage = () => {
       </p>
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label htmlFor="feedbackType">Feedback Type</label>
           <select
             id="feedbackType"
@@ -51,6 +52,7 @@ const FeedbackPage = () => {
         </div>
 
         <div className={styles.formGroup}>
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label htmlFor="firstName">First Name</label>
           <input
             type="text"
@@ -64,6 +66,7 @@ const FeedbackPage = () => {
         </div>
 
         <div className={styles.formGroup}>
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label htmlFor="lastName">Last Name</label>
           <input
             type="text"
@@ -77,6 +80,7 @@ const FeedbackPage = () => {
         </div>
 
         <div className={styles.formGroup}>
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label htmlFor="email">Email</label>
           <input
             type="email"
@@ -90,6 +94,7 @@ const FeedbackPage = () => {
         </div>
 
         <div className={styles.formGroup}>
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label htmlFor="feedback">Feedback</label>
           <textarea
             id="feedback"
@@ -98,14 +103,13 @@ const FeedbackPage = () => {
             onChange={handleInputChange}
             className={styles.textarea}
             required
-          ></textarea>
+          />
         </div>
 
         <div className={styles.buttonContainer}>
           <button
             type="submit"
             className={styles.buttonCentered}
-            onClick={handleSubmit}
           >
             Submit
           </button>
