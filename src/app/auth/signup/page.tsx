@@ -1,120 +1,126 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
-import { Card, Col, Container, Button, Form, Row } from 'react-bootstrap';
-import { createUser } from '@/lib/dbActions';
+import React, { useState } from 'react';
+import styles from '@/styles/signup.module.css';
+import Link from 'next/link';
 
-type SignUpForm = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  // acceptTerms: boolean;
-};
-
-/** The sign up page. */
 const SignUp = () => {
-  const validationSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required').email('Email is invalid'),
-    password: Yup.string()
-      .required('Password is required')
-      .min(6, 'Password must be at least 6 characters')
-      .max(40, 'Password must not exceed 40 characters'),
-    confirmPassword: Yup.string()
-      .required('Confirm Password is required')
-      .oneOf([Yup.ref('password'), ''], 'Confirm Password does not match'),
-  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [recheckPassword, setRecheckPassword] = useState('');
+  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
+  const [recheckPasswordTouched, setRecheckPasswordTouched] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<SignUpForm>({
-    resolver: yupResolver(validationSchema),
-  });
+  const validateEmail = (value: string) => {
+    setEmail(value);
+    if (value) {
+      setIsValidEmail(value.endsWith('@hawaii.edu'));
+    }
+  };
 
-  const onSubmit = async (data: SignUpForm) => {
-    // console.log(JSON.stringify(data, null, 2));
-    await createUser(data);
-    // After creating, signIn with redirect to the add page
-    await signIn('credentials', { callbackUrl: '/editprofile', ...data });
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    setPasswordsMatch(value === recheckPassword);
+  };
+
+  const handleRecheckPasswordChange = (value: string) => {
+    setRecheckPassword(value);
+  };
+
+  const handleBlurRecheckPassword = () => {
+    setRecheckPasswordTouched(true);
+    setPasswordsMatch(password === recheckPassword);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isValidEmail || !passwordsMatch) {
+      return;
+    }
+    // Submit form logic here...
+    console.log('Form submitted:', { email, password });
   };
 
   return (
-    <main>
-      <Container>
-        <Row className="justify-content-center">
-          <Col xs={5}>
-            <h1 className="text-center">Sign Up</h1>
-            <Card>
-              <Card.Body>
-                <Form onSubmit={handleSubmit(onSubmit)}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Email</Form.Label>
-                    <input
-                      type="text"
-                      {...register('email')}
-                      className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-                    />
-                    <div className="invalid-feedback">
-                      {errors.email?.message}
-                    </div>
-                  </Form.Group>
+    <div className={styles.container}>
+      <div className={styles.formWrapper}>
+        <h1 className={styles.title}>Sign Up</h1>
 
-                  <Form.Group className="form-group">
-                    <Form.Label>Password</Form.Label>
-                    <input
-                      type="password"
-                      {...register('password')}
-                      className={`form-control ${errors.password ? 'is-invalid' : ''}`}
-                    />
-                    <div className="invalid-feedback">
-                      {errors.password?.message}
-                    </div>
-                  </Form.Group>
-                  <Form.Group className="form-group">
-                    <Form.Label>Confirm Password</Form.Label>
-                    <input
-                      type="password"
-                      {...register('confirmPassword')}
-                      className={`form-control ${errors.confirmPassword ? 'is-invalid' : ''}`}
-                    />
-                    <div className="invalid-feedback">
-                      {errors.confirmPassword?.message}
-                    </div>
-                  </Form.Group>
-                  <Form.Group className="form-group py-3">
-                    <Row>
-                      <Col>
-                        <Button type="submit" className="btn btn-primary">
-                          Register
-                        </Button>
-                      </Col>
-                      <Col>
-                        <Button
-                          type="button"
-                          onClick={() => reset()}
-                          className="btn btn-warning float-right"
-                        >
-                          Reset
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form.Group>
-                </Form>
-              </Card.Body>
-              <Card.Footer>
-                Already have an account?
-                <a href="/auth/signin">Sign in</a>
-              </Card.Footer>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    </main>
+        <p className={styles.descriptionCentered}>
+          Sign up using your @hawaii.edu email
+        </p>
+
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.inputGroup}>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label htmlFor="email" className={styles.label}>
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              className={`${styles.input} ${!isValidEmail ? styles.invalid : ''}`}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onBlur={() => validateEmail(email)}
+              required
+            />
+            {!isValidEmail && (
+              <p className={styles.error}>Email must end with @hawaii.edu.</p>
+            )}
+          </div>
+
+          <div className={styles.inputGroup}>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label htmlFor="password" className={styles.label}>
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              className={styles.input}
+              value={password}
+              onChange={(e) => handlePasswordChange(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className={styles.inputGroup}>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label htmlFor="recheckPassword" className={styles.label}>
+              Recheck Password
+            </label>
+            <input
+              type="password"
+              id="recheckPassword"
+              className={`${styles.input} ${!passwordsMatch && recheckPasswordTouched ? styles.invalid : ''}`}
+              value={recheckPassword}
+              onChange={(e) => handleRecheckPasswordChange(e.target.value)}
+              onBlur={handleBlurRecheckPassword}
+              required
+            />
+            {!passwordsMatch && recheckPasswordTouched && (
+              <p className={styles.error}>Passwords do not match.</p>
+            )}
+          </div>
+
+          <button type="submit" className={styles.button}>
+            Sign Up
+          </button>
+        </form>
+      </div>
+
+      {/* Centered account prompt */}
+      <div className={styles.accountPromptWrapper}>
+        <p>
+          Already have an account?
+          <Link href="/auth/signin" className={styles.signInLink}>
+            Sign In
+          </Link>
+        </p>
+      </div>
+    </div>
   );
 };
 
