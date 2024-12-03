@@ -243,3 +243,15 @@ export async function getProfile(userId: number | string) {
     return null;
   }
 }
+
+export const checkIfEmailExists = async (email: string) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    return !!user;
+  } catch (error) {
+    console.error('Error checking email:', error);
+    return false;
+  }
+};
