@@ -16,15 +16,13 @@ type SignUpForm = {
 };
 
 const SignUp = () => {
-  const [isValidEmail, setIsValidEmail] = useState(true);
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [emailTaken, setEmailTaken] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isValidEmail, setIsValidEmail] = useState(true);
 
   const validationSchema = Yup.object().shape({
-    email: Yup.string()
-      .required('Email is required')
-      .email('Email is invalid')
-      .matches(/@hawaii.edu$/, 'Email must end with @hawaii.edu'),
+    email: Yup.string().required('Email is required').email('Email is invalid'),
     password: Yup.string()
       .required('Password is required')
       .min(6, 'Password must be at least 6 characters')
@@ -39,17 +37,45 @@ const SignUp = () => {
     handleSubmit,
     formState: { errors },
     setValue,
+    setError,
+    clearErrors,
   } = useForm<SignUpForm>({
     resolver: yupResolver(validationSchema),
   });
 
+  // Function to check if email is already taken
+  const checkEmailTaken = async (email: string) => {
+    const exists = await checkIfEmailExists(email);
+    if (exists) {
+      setEmailTaken(true);
+      setError('email', { type: 'manual', message: 'Email is already taken.' });
+    } else {
+      setEmailTaken(false);
+      clearErrors('email');
+    }
+  };
+
+  // Validate email when the user finishes typing (onBlur)
   const validateEmail = async (value: string) => {
     setValue('email', value);
-    setIsValidEmail(value.endsWith('@hawaii.edu'));
-    if (value && isValidEmail) {
-      const exists = await checkIfEmailExists(value);
-      setEmailTaken(exists);
+    const isEmailValid = value.endsWith('@hawaii.edu');
+
+    if (!isEmailValid) {
+      setIsValidEmail(false);
+      setError('email', { type: 'manual', message: 'Email must end with @hawaii.edu.' });
+    } else {
+      setIsValidEmail(true);
+      clearErrors('email');
+      await checkEmailTaken(value);
     }
+  };
+
+  // Handle when the user changes the email field
+  const handleEmailChange = async (value: string) => {
+    setEmailTaken(false);
+    setIsValidEmail(true);
+    clearErrors('email');
+    await checkEmailTaken(value);
   };
 
   const handlePasswordBlur = (confirmPassword: string) => {
@@ -61,11 +87,16 @@ const SignUp = () => {
 
   const onSubmit = async (data: SignUpForm) => {
     if (emailTaken) {
+      setError('email', { type: 'manual', message: 'Email is already taken.' });
       return;
     }
 
+    setIsSubmitting(true);
+
     await createUser(data);
     await signIn('credentials', { callbackUrl: '/editprofile', ...data });
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -87,16 +118,21 @@ const SignUp = () => {
             <input
               type="email"
               id="email"
-              className={`${styles.input} ${!isValidEmail || emailTaken ? styles.invalid : ''}`}
-              {...register('email')}
+              className={`${styles.input} ${(emailTaken || !isValidEmail) ? styles.invalid : ''}`}
+              {...register('email', { required: 'Email is required' })}
               onBlur={(e) => validateEmail(e.target.value)}
+              onChange={(e) => handleEmailChange(e.target.value)}
               required
             />
-            {!isValidEmail && (
-              <p className={styles.error}>Email must end with @hawaii.edu.</p>
+            {(emailTaken || !isValidEmail) && (
+              <p className={styles.error}>
+                {emailTaken ? 'Email is already taken.' : 'Email must end with @hawaii.edu.'}
+              </p>
             )}
-            {emailTaken && <p className={styles.error}>Email is already taken.</p>}
-            {errors.email && <p className={styles.error}>{errors.email.message}</p>}
+            {/* Only show react-hook-form error if there's no manual email error */}
+            {!emailTaken && isValidEmail && errors.email && (
+              <p className={styles.error}>{errors.email.message}</p>
+            )}
           </div>
 
           {/* Password Field */}
@@ -134,13 +170,13 @@ const SignUp = () => {
             {errors.confirmPassword && (
               <p className={styles.error}>{errors.confirmPassword.message}</p>
             )}
-            {!passwordsMatch && (
+            {!passwordsMatch && !errors.confirmPassword && (
               <p className={styles.error}>Passwords must match.</p>
             )}
           </div>
 
-          <button type="submit" className={styles.button}>
-            Sign Up
+          <button type="submit" className={styles.button} disabled={isSubmitting}>
+            {isSubmitting ? 'Signing Up...' : 'Sign Up'}
           </button>
         </form>
       </div>
