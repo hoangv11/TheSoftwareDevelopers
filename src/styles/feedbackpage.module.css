@@ -1,0 +1,56 @@
+.container {
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.headerLeft {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.subheader {
+  text-align: left;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.form {
+  background-color: #f4f4f4;
+  padding: 30px;
+  border-radius: 8px;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.input, .textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.textarea {
+  height: 200px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.buttonCentered {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: #d1b3e2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
