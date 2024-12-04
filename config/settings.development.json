@@ -9,5 +9,26 @@
     { "name": "Bicycle", "quantity": 2, "owner": "john@foo.com", "condition": "poor" },
     { "name": "Banana", "quantity": 2, "owner": "admin@foo.com", "condition": "good" },
     { "name": "Boogie Board", "quantity": 2, "owner": "admin@foo.com", "condition": "excellent" }
+  ],
+
+  "defaultFeedback": [
+    {
+      "feedbackType": "Complaint",
+      "firstName": "Alice",
+      "lastName": "Smith",
+      "email": "alice@foo.com",
+      "feedback": "The basket was damaged upon arrival.",
+      "isResolved": false,
+      "createdAt": "2024-12-01T10:00:00Z"
+    },
+    {
+      "feedbackType": "Suggestion",
+      "firstName": "Bob",
+      "lastName": "Jones",
+      "email": "bob@foo.com",
+      "feedback": "Consider offering more color options for boogie boards.",
+      "isResolved": true,
+      "createdAt": "2024-11-28T14:30:00Z"
+    }
   ]
 }
