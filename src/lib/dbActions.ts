@@ -87,6 +87,26 @@ export async function createUser(credentials: {
 }
 
 /**
+ * Gets feedback so that use client don't bug out crazy style
+ */
+export async function getFeedback() {
+  const feedback = await prisma.feedback.findMany();
+  return feedback;
+}
+
+/**
+ * Updates feedback to be resolved in the database.
+ * @param id, the id of the feedback to update.
+ */
+export async function resolveTrue(id: number) {
+  await prisma.feedback.update({
+    where: { id },
+    data: {
+      isResolved: true,
+    },
+  });
+}
+/**
  * Changes the password of an existing user in the database.
  * @param credentials, an object with the following properties: email, password.
  */
