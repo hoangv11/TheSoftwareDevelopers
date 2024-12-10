@@ -1,21 +1,54 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import styles from '../../styles/calendarpage.module.css';
 
+// Define a type for the study sessions
+type StudySession = {
+  id: number;
+  startTime: Date;
+  endTime: Date;
+  title: string;
+  description?: string;
+};
+
 const Page = () => {
   const router = useRouter();
+  const [sessions, setSessions] = useState<StudySession[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Example events
-  const events = [
-    { title: 'Meeting with Bob', date: '2024-12-01T10:00:00' },
-    { title: 'Conference Call', date: '2024-12-10T14:00:00' },
-    { title: 'Team Workshop', date: '2024-12-15T09:00:00' },
-  ];
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const response = await fetch('/api/sessions');
+        if (!response.ok) {
+          throw new Error('Failed to fetch sessions');
+        }
+        const data = await response.json();
+        
+        // Transform sessions into FullCalendar event format
+        const calendarEvents = data.map((session: StudySession) => ({
+          id: session.id.toString(),
+          title: session.title,
+          start: new Date(session.startTime),
+          end: new Date(session.endTime),
+          allDay: false
+        }));
+
+        setSessions(calendarEvents);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching sessions:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchSessions();
+  }, []);
 
   const handleBack = () => {
     router.back();
@@ -25,6 +58,10 @@ const Page = () => {
     router.push('/session');
   };
 
+  if (isLoading) {
+    return <div className={styles.container}>Loading sessions...</div>;
+  }
+
   return (
     <div className={styles.container}>
       <h1 className={styles.header}>My Calendar</h1>
@@ -32,7 +69,7 @@ const Page = () => {
         <FullCalendar
           plugins={[timeGridPlugin, interactionPlugin]}
           initialView="timeGridWeek"
-          events={events}
+          events={sessions}
           editable
           selectable
           headerToolbar={{
@@ -41,15 +78,14 @@ const Page = () => {
             right: 'next',
           }}
           allDaySlot={false}
-          slotDuration="00:30:00" // Slot duration for time grid (e.g., 30-minute intervals)
-          slotLabelInterval="01:00" // Interval for time slots (every hour)
-          nowIndicator // Display a "now" indicator
-          contentHeight="700px" // Set a fixed height for the calendar container
+          slotDuration="00:30:00"
+          slotLabelInterval="01:00"
+          nowIndicator
+          contentHeight="700px"
           height="auto"
         />
       </div>
 
-      {/* Buttons below the calendar */}
       <div className={styles.buttonContainer}>
         <button
           type="button"
