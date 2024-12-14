@@ -29,14 +29,14 @@ const Page = () => {
           throw new Error('Failed to fetch sessions');
         }
         const data = await response.json();
-        
+
         // Transform sessions into FullCalendar event format
         const calendarEvents = data.map((session: StudySession) => ({
           id: session.id.toString(),
           title: session.title,
           start: new Date(session.startTime),
           end: new Date(session.endTime),
-          allDay: false
+          allDay: false,
         }));
 
         setSessions(calendarEvents);
