@@ -17,6 +17,7 @@ model User {
   profile      Profile?
   StudySession StudySession[] @relation("CreatedSessions")
   studysession StudySession[] @relation("UserSessions")
+  banned       Boolean        @default(false)
 }
 
 model Profile {
