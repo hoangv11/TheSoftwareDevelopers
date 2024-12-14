@@ -14,7 +14,8 @@ async function main() {
     if (account.role === 'ADMIN') {
       role = 'ADMIN';
     }
-    console.log(`  Creating user: ${account.email} with role: ${role}`);
+    const banned = account.banned || false; // Default to false if not provided
+    console.log(`  Creating user: ${account.email} with role: ${role} and banned: ${banned}`);
     await prisma.user.upsert({
       where: { email: account.email },
       update: {},
@@ -22,6 +23,7 @@ async function main() {
         email: account.email,
         password,
         role,
+        banned,
       },
     });
   });

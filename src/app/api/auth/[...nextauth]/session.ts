@@ -5,31 +5,37 @@ import authOptions from '@/lib/auth';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
-) {
+  res: NextApiResponse,
+): Promise<void> {
   const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    res.status(401).json({ error: 'Unauthorized' });
+    return; // Ensure function execution stops here
   }
 
   try {
-    const currentUser = parseInt(session.user.id, 10);
+    const currentUser = Number(session.user.id);
+
+    if (Number.isNaN(currentUser)) {
+      res.status(400).json({ error: 'Invalid user ID' });
+      return; // Validate user ID before proceeding
+    }
 
     const sessions = await prisma.studySession.findMany({
       where: {
         user: {
           some: {
-            id: currentUser
-          }
-        }
+            id: currentUser,
+          },
+        },
       },
       select: {
         id: true,
         title: true,
         startTime: true,
         endTime: true,
-      }
+      },
     });
 
     res.status(200).json(sessions);

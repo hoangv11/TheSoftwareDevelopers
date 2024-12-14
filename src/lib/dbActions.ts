@@ -87,6 +87,17 @@ export async function createUser(credentials: {
 }
 
 /**
+ *Bans user
+ * @param userId user to be banned
+ */
+export async function banUser(userId: number) {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { banned: true },
+  });
+}
+
+/**
  * Gets feedback so that use client don't bug out crazy style
  */
 export async function getFeedback() {
