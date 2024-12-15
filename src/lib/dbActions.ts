@@ -317,3 +317,10 @@ export async function getAllProfilesSorted() {
     return [];
   }
 }
+
+export async function banUser(userId: number) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { banned: true },
+  });
+}

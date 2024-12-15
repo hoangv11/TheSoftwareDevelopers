@@ -9,7 +9,6 @@ import { Container, Table, Button } from 'react-bootstrap';
 const AdminBanPage = async () => {
   const session = await getServerSession(authOptions);
 
-  // Ensure the adminProtectedPage is executed for session validation
   adminProtectedPage(
     session as {
       user: { email: string; id: string; randomKey: string };
@@ -22,7 +21,7 @@ const AdminBanPage = async () => {
 
   const handleBan = async (userId: number) => {
     await banUser(userId);
-    window.location.reload(); // Reload the page to reflect changes
+    window.location.reload();
   };
 
   return (
