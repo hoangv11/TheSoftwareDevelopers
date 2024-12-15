@@ -1,91 +1,78 @@
 import React from 'react';
-import { Container, Row, Col, Button, Table } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
+import { getAllProfilesSorted } from '@/lib/dbActions';
 
-const Leaderboard = () => {
-  // Sample leaderboard data
-  const leaderboardData = [
-    { name: 'Alice Johnson', points: 1200, strongestSubject: 'English' },
-    { name: 'Bob Smith', points: 1150, strongestSubject: 'Mathematics' },
-    { name: 'Charlie Brown', points: 1100, strongestSubject: 'Chemistry' },
-    { name: 'Diana Ross', points: 1080, strongestSubject: 'Physics' },
-    { name: 'Ethan Hunt', points: 1050, strongestSubject: 'Biology' },
-  ];
+export default async function Leaderboard() {
+  const profiles = await getAllProfilesSorted();
 
   return (
-    <Container
-      className="d-flex flex-column justify-content-between p-4"
-      style={{ backgroundColor: '#F7E7D6', minHeight: '100vh' }}
+    <div
+      className="leaderboardContainer p-4"
+      style={{
+        backgroundColor: '#F6E6D5',
+        minHeight: '100vh',
+        borderRadius: '12px',
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+        width: '80%',
+        margin: '0 auto',
+      }}
     >
-      {/* Leaderboard Title */}
-      <Row className="my-3">
-        <Col className="text-center">
-          <h3 style={{ fontSize: '3rem', fontWeight: 'bold' }}>Leaderboard</h3>
-        </Col>
-      </Row>
+      <div
+        className="text-center mb-4"
+        style={{
+          padding: '20px',
+          backgroundColor: '#B49CC8',
+          borderRadius: '10px',
+          color: 'white',
+        }}
+      >
+        <h1 style={{ fontWeight: 'bold', fontSize: '2.5rem' }}>Leaderboard</h1>
+        <p style={{ fontSize: '1.2rem', margin: '0' }}>
+          See the top performers ranked by points!
+        </p>
+      </div>
 
-      {/* Buttons */}
-      <Row className="mb-3">
-        {/* Left-aligned buttons */}
-        <Col xs="auto">
-          <Button variant="light" style={{ border: '1px solid #ddd' }}>
-            Search User
-          </Button>
-        </Col>
-        <Col xs="auto">
-          <Button variant="light" style={{ border: '1px solid #ddd' }}>
-            Sort by
-          </Button>
-        </Col>
-
-        {/* Right-aligned button */}
-        <Col xs="auto" className="ms-auto">
-          <Button variant="secondary" style={{ backgroundColor: '#B49CC8', border: 'none' }}>
-            Filter
-          </Button>
-        </Col>
-      </Row>
-
-      {/* Leaderboard Section */}
-      <Row className="flex-grow-1">
-        <Col className="p-3 border rounded" style={{ backgroundColor: '#FFFFFF' }}>
-          <Table striped bordered hover responsive>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Points</th>
-                <th>Strongest Subject</th>
+      <Table
+        hover
+        responsive
+        style={{
+          backgroundColor: '#FFFFFF',
+          borderRadius: '10px',
+          overflow: 'hidden',
+        }}
+        className="text-center"
+      >
+        <thead style={{ backgroundColor: '#B49CC8', color: 'white' }}>
+          <tr>
+            <th style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Rank</th>
+            <th style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Name</th>
+            <th style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Points</th>
+            <th style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Major</th>
+          </tr>
+        </thead>
+        <tbody>
+          {profiles.length > 0 ? (
+            profiles.map((profile, index) => (
+              <tr key={profile.id}>
+                <td style={{ fontWeight: '600' }}>{index + 1}</td>
+                <td
+                  style={{ fontWeight: '500' }}
+                >
+                  {`${profile.firstName} ${profile.lastName}`}
+                </td>
+                <td style={{ fontWeight: '600' }}>{profile.points}</td>
+                <td style={{ fontWeight: '600' }}>{profile.major}</td>
               </tr>
-            </thead>
-            <tbody>
-              {leaderboardData.map((user, index) => (
-                <tr key={user.name}>
-                  {' '}
-                  {/* Using name as the unique key */}
-                  <td>{index + 1}</td>
-                  <td>{user.name}</td>
-                  <td>{user.points}</td>
-                  <td>{user.strongestSubject}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Col>
-      </Row>
-
-      {/* Back Button */}
-      <Row className="mt-4">
-        <Col>
-          <Button
-            variant="secondary"
-            style={{ backgroundColor: '#B49CC8', border: 'none', width: '100%' }}
-          >
-            Back
-          </Button>
-        </Col>
-      </Row>
-    </Container>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={4} className="text-center" style={{ color: 'gray' }}>
+                No profiles available.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
+    </div>
   );
-};
-
-export default Leaderboard;
+}

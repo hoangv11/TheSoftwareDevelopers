@@ -29,6 +29,7 @@ model Profile {
   bio               String
   userId            Int    @unique
   user              User   @relation(fields: [userId], references: [id])
+  points            Int    @default(0)
 }
 
 model StudySession {
@@ -47,16 +48,15 @@ model StudySession {
 }
 
 model Feedback {
-  id            Int      @id @default(autoincrement())
-  feedbackType  String
-  firstName     String
-  lastName      String
-  email         String
-  feedback      String
-  isResolved    Boolean  @default(false)
-  createdAt     DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  feedbackType String
+  firstName    String
+  lastName     String
+  email        String
+  feedback     String
+  isResolved   Boolean  @default(false)
+  createdAt    DateTime @default(now())
 }
-
 
 model Stuff {
   id        Int       @id @default(autoincrement())

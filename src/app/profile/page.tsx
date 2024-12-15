@@ -50,7 +50,7 @@ const MyProfile = async () => {
           <p className="profile-bio">{userProfile.bio}</p>
           <div className="points-container">
             <StarIcon size={20} className="star-icon" />
-            <span>1250 Points</span>
+            <span>{userProfile.points}</span>
           </div>
           <Link href="/editprofile">
             <Button className="edit-profile-button">Edit Profile</Button>
