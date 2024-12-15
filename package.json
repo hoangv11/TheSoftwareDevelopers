@@ -23,6 +23,7 @@
     "@hookform/resolvers": "^3.6.0",
     "@ngneat/falso": "^7.2.0",
     "@prisma/client": "^5.22.0",
+    "@types/nodemailer": "^6.4.17",
     "aws-sdk": "^2.1692.0",
     "bcrypt": "^5.1.1",
     "bootstrap": "^5.3.3",
@@ -31,6 +32,7 @@
     "multiselect-react-dropdown": "^2.0.25",
     "next": "14.2.10",
     "next-auth": "^4.24.7",
+    "nodemailer": "^6.9.16",
     "react": "^18",
     "react-bootstrap": "^2.10.6",
     "react-bootstrap-icons": "^1.11.4",
@@ -38,7 +40,6 @@
     "react-dom": "^18",
     "react-hook-form": "^7.52.0",
     "sweetalert": "^2.1.2",
-    "ts-node": "10.9.2",
     "yup": "^1.4.0"
   },
   "devDependencies": {
@@ -55,6 +56,7 @@
     "prettier": "^3.3.1",
     "prettier-eslint": "^16.3.0",
     "prisma": "^5.22.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }
 }

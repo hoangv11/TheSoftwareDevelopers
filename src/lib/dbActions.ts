@@ -3,8 +3,9 @@
 import { Stuff, Condition, Profile, StudySession } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { redirect } from 'next/navigation';
+import crypto from 'crypto';
+import sendVerificationEmail from './emailService'; // Import email service
 import { prisma } from './prisma';
-
 /**
  * Adds a new stuff to the database.
  * @param stuff, an object with the following properties: name, quantity, owner, condition.
@@ -324,3 +325,21 @@ export async function toggleBanUser(userId: number, shouldBan: boolean) {
     data: { banned: shouldBan },
   });
 }
+
+export const sendVerificationCode = async (email: string) => {
+  const verificationCode = crypto.randomInt(100000, 999999).toString(); // Generate a 6-digit code
+
+  // Store the code in the database (with a short expiry time, e.g., 10 minutes)
+  await prisma.verificationCode.create({
+    data: {
+      email,
+      code: verificationCode,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // Expires in 10 minutes
+    },
+  });
+
+  // Send the verification email
+  await sendVerificationEmail(email, Number(verificationCode)); // Convert to number
+
+  return verificationCode; // Returning the code to be used for comparison in the frontend
+};
