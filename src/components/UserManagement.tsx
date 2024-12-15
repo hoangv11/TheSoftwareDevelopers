@@ -2,20 +2,25 @@
 
 import React, { useState } from 'react';
 import { Table, Button } from 'react-bootstrap';
+import { toggleBanUser } from '@/lib/dbActions'; // Import the action
 
-const UserManagement = ({ users }: { users: { id: number; email: string; role: string; banned: boolean }[] }) => {
+const UserManagement = ({
+  users,
+}: {
+  users: { id: number; email: string; role: string; banned: boolean }[];
+}) => {
   const [localUsers, setLocalUsers] = useState(users);
 
-  const handleBan = async (userId: number) => {
+  const handleToggleBan = async (userId: number, shouldBan: boolean) => {
     try {
-      await fetch('/api/banUser', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
-      });
-      setLocalUsers((prev) => prev.map((user) => (user.id === userId ? { ...user, banned: true } : user)));
+    // Update the database
+      await toggleBanUser(userId, shouldBan);
+
+      // Update the local state
+      // eslint-disable-next-line max-len
+      setLocalUsers((prevUsers) => prevUsers.map((user) => (user.id === userId ? { ...user, banned: shouldBan } : user)));
     } catch (error) {
-      console.error('Failed to ban user:', error);
+      console.error('Failed to toggle user ban status:', error);
     }
   };
 
@@ -38,11 +43,12 @@ const UserManagement = ({ users }: { users: { id: number; email: string; role: s
             <td>{user.role}</td>
             <td>{user.banned ? 'Yes' : 'No'}</td>
             <td>
-              {!user.banned && (
-                <Button variant="danger" onClick={() => handleBan(user.id)}>
-                  Ban
-                </Button>
-              )}
+              <Button
+                variant={user.banned ? 'success' : 'danger'}
+                onClick={() => handleToggleBan(user.id, !user.banned)}
+              >
+                {user.banned ? 'Unban' : 'Ban'}
+              </Button>
             </td>
           </tr>
         ))}

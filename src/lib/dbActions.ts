@@ -318,9 +318,9 @@ export async function getAllProfilesSorted() {
   }
 }
 
-export async function banUser(userId: number) {
+export async function toggleBanUser(userId: number, shouldBan: boolean) {
   return prisma.user.update({
     where: { id: userId },
-    data: { banned: true },
+    data: { banned: shouldBan },
   });
 }
