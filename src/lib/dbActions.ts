@@ -1,11 +1,6 @@
 'use server';
 
-import {
-  Stuff,
-  Condition,
-  Profile,
-  StudySession,
-} from '@prisma/client';
+import { Stuff, Condition, Profile, StudySession } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { redirect } from 'next/navigation';
 import { prisma } from './prisma';
@@ -92,17 +87,6 @@ export async function createUser(credentials: {
 }
 
 /**
- *Bans user
- * @param userId user to be banned
- */
-export async function banUser(userId: number) {
-  await prisma.user.update({
-    where: { id: userId },
-    data: { banned: true },
-  });
-}
-
-/**
  * Gets feedback so that use client don't bug out crazy style
  */
 export async function getFeedback() {
@@ -156,6 +140,7 @@ export async function createProfile(profile: Profile) {
         lastName: profile.lastName,
         major: profile.major,
         bio: profile.bio,
+        points: profile.points,
       },
     });
   } else {
@@ -168,6 +153,7 @@ export async function createProfile(profile: Profile) {
         lastName: profile.lastName,
         major: profile.major,
         bio: profile.bio,
+        points: profile.points,
       },
     });
   }
@@ -291,3 +277,43 @@ export const checkIfEmailExists = async (email: string) => {
     return false;
   }
 };
+
+export const incrementPoints = async (userId: number, pointsToAdd: number) => {
+  // Ensure points to add is valid
+  if (pointsToAdd <= 0) {
+    throw new Error('Points to add must be greater than zero.');
+  }
+
+  // Update points using userId
+  const updatedProfile = await prisma.profile.update({
+    where: { userId }, // Use userId instead of id
+    data: {
+      points: {
+        increment: pointsToAdd,
+      },
+    },
+  });
+
+  return updatedProfile;
+};
+
+export async function getAllProfilesSorted() {
+  try {
+    const profiles = await prisma.profile.findMany({
+      orderBy: {
+        points: 'desc',
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        major: true,
+        points: true,
+      },
+    });
+    return profiles;
+  } catch (error) {
+    console.error('Error fetching profiles:', error);
+    return [];
+  }
+}

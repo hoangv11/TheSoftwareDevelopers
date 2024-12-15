@@ -32,7 +32,7 @@ const onSubmit = async (
   session: any,
 ) => {
   const userId = parseInt(session?.user?.id, 10);
-  await createProfile({ ...data, userId, id: userId });
+  await createProfile({ ...data, userId, id: userId, points: 0 });
 
   swal('Success', 'Profile created successfully!', 'success', {
     timer: 1500,

@@ -2,7 +2,7 @@
 
 import { Form, Button } from 'react-bootstrap';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { createSession } from '@/lib/dbActions';
+import { createSession, incrementPoints } from '@/lib/dbActions';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import DatePicker from 'react-datepicker';
@@ -33,7 +33,7 @@ const onSubmit = async (
     userId,
     id: userId,
   });
-
+  incrementPoints(userId, 50);
   swal('Success', 'Created Session', 'success', {
     timer: 1000,
   });

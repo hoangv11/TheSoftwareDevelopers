@@ -4,7 +4,7 @@
 
 import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
-import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { Container, Nav, Navbar, NavDropdown, Image } from 'react-bootstrap';
 import {
   BoxArrowRight,
   Lock,
@@ -12,6 +12,7 @@ import {
   PersonPlusFill,
   Person,
 } from 'react-bootstrap-icons';
+import Link from 'next/link';
 
 const NavBar: React.FC = () => {
   const { data: session } = useSession();
@@ -22,7 +23,9 @@ const NavBar: React.FC = () => {
     <Navbar bg="light" expand="lg">
       <Container>
         {/* Change ICStudy brand link to UserHomePage when logged in */}
-        <Navbar.Brand href={currentUser ? '/userHome' : '/'}>ICStudy</Navbar.Brand>
+        <Link href={currentUser ? '/userHome' : '/'}>
+          <Image src="/ICStudy.png" alt="ICStudy Logo" height="40" style={{ cursor: 'pointer' }} />
+        </Link>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto justify-content-start">
@@ -56,6 +59,13 @@ const NavBar: React.FC = () => {
                   active={pathName === '/session'}
                 >
                   Create Session
+                </Nav.Link>
+                <Nav.Link
+                  id="LeaderBoard"
+                  href="/LeaderBoard"
+                  active={pathName === '/LeaderBoard'}
+                >
+                  Leaderboard
                 </Nav.Link>
               </>
             )}
