@@ -57,7 +57,9 @@ export default async function Leaderboard() {
                 <td style={{ fontWeight: '600' }}>{index + 1}</td>
                 <td
                   style={{ fontWeight: '500' }}
-                >{`${profile.firstName} ${profile.lastName}`}</td>
+                >
+                  {`${profile.firstName} ${profile.lastName}`}
+                </td>
                 <td style={{ fontWeight: '600' }}>{profile.points}</td>
                 <td style={{ fontWeight: '600' }}>{profile.major}</td>
               </tr>
