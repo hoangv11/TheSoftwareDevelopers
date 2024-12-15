@@ -1,7 +1,6 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
-import { getAllProfilesSorted } from '@/lib/dbActions'; // Ensure Profile has id, firstName, lastName, points
-import '../../styles/leaderboard.css';
+import { getAllProfilesSorted } from '@/lib/dbActions';
 
 export default async function Leaderboard() {
   const profiles = await getAllProfilesSorted();
@@ -56,7 +55,9 @@ export default async function Leaderboard() {
             profiles.map((profile, index) => (
               <tr key={profile.id}>
                 <td style={{ fontWeight: '600' }}>{index + 1}</td>
-                <td style={{ fontWeight: '500' }}>{`${profile.firstName} ${profile.lastName}`}</td>
+                <td
+                  style={{ fontWeight: '500' }}
+                >{`${profile.firstName} ${profile.lastName}`}</td>
                 <td style={{ fontWeight: '600' }}>{profile.points}</td>
                 <td style={{ fontWeight: '600' }}>{profile.major}</td>
               </tr>
@@ -71,6 +72,5 @@ export default async function Leaderboard() {
         </tbody>
       </Table>
     </div>
-
   );
 }
