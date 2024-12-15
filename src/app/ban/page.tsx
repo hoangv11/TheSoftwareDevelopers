@@ -3,13 +3,12 @@ import authOptions from '@/lib/authOptions';
 import { getServerSession } from 'next-auth';
 import { adminProtectedPage } from '@/lib/page-protection';
 import { prisma } from '@/lib/prisma';
-import { banUser } from '@/lib/dbActions';
-import { Container, Table, Button } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
+import UserManagement from '@/components/UserManagement'; // Import the client component
 
 const AdminBanPage = async () => {
   const session = await getServerSession(authOptions);
 
-  // Ensure the adminProtectedPage is executed for session validation
   adminProtectedPage(
     session as {
       user: { email: string; id: string; randomKey: string };
@@ -20,42 +19,12 @@ const AdminBanPage = async () => {
     select: { id: true, email: true, role: true, banned: true },
   });
 
-  const handleBan = async (userId: number) => {
-    await banUser(userId);
-    window.location.reload(); // Reload the page to reflect changes
-  };
-
   return (
     <Container>
       <h1>Manage Users</h1>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Banned</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
-              <td>{user.email}</td>
-              <td>{user.role}</td>
-              <td>{user.banned ? 'Yes' : 'No'}</td>
-              <td>
-                {!user.banned && (
-                  <Button variant="danger" onClick={() => handleBan(user.id)}>
-                    Ban
-                  </Button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <UserManagement users={users} />
+      {' '}
+      {/* Pass data to the client component */}
     </Container>
   );
 };
