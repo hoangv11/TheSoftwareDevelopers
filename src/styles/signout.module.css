@@ -1,0 +1,74 @@
+/* Page Container */
+.pageContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+    background: #ffffff;
+  }
+  
+  /* Card Container */
+  .card {
+    max-width: 420px;
+    width: 100%;
+    border-radius: 16px;
+    padding: 30px;
+    background-color: #ffffff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+  }
+  
+  /* Heading */
+  .heading {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333333;
+    margin-bottom: 10px;
+  }
+  
+  /* Description */
+  .description {
+    font-size: 1rem;
+    color: #666666;
+    margin-bottom: 30px;
+  }
+  
+  /* Button Row */
+  .buttonRow {
+    display: flex;
+    gap: 15px; 
+    justify-content: center;
+  }
+  
+  /* Buttons */
+  .button {
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: none;
+    text-transform: uppercase; 
+  }
+  
+  /* Sign Out Button */
+  .signOutBtn {
+    background-color: #ff4d4f; 
+    color: white;
+  }
+  
+  .signOutBtn:hover {
+    background-color: #e43f40;
+  }
+  
+  /* Cancel Button */
+  .cancelBtn {
+    background-color: #6c757d; 
+    color: white;
+  }
+  
+  .cancelBtn:hover {
+    background-color: #5a6268;
+  }
+  

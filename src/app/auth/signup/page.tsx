@@ -235,7 +235,7 @@ const SignUp = () => {
             className={styles.button}
             disabled={isSubmitting || !isValidEmail} // Disable button if email is invalid
           >
-            {isSubmitting ? 'Sending Code...' : 'Sign Up'}
+            {isSubmitting ? 'SENDING CODE...' : 'SIGN UP'}
           </button>
 
           {verificationCodeSent && (
@@ -249,17 +249,16 @@ const SignUp = () => {
             </button>
           )}
         </form>
-      </div>
 
-      {/* Centered account prompt */}
-      <div className={styles.accountPromptWrapper}>
-        <p>
-          Already have an account?&nbsp;
-          <Link href="/auth/signin">Log in</Link>
-        </p>
+        {/* Moved account prompt inside the form wrapper */}
+        <div className={styles.accountPromptWrapper}>
+          <p>
+            Already have an account?&nbsp;
+            <Link href="/auth/signin" className={styles.logIn}>Log in</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
 };
-
 export default SignUp;

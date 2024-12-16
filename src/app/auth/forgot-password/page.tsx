@@ -64,7 +64,7 @@ const ForgotPasswordPage = () => {
         <div className={styles.accountPromptWrapper}>
           <p>
             Remembered your password?&nbsp;
-            <a href="/auth/signin" className={styles.signInLink}>Log in</a>
+            <a href="/auth/signin" className={`${styles.signInLink} ${styles.boldLink}`}>Log in</a>
           </p>
         </div>
       </div>
