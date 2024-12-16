@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import nodemailer from 'nodemailer';
 
 export async function POST(req: Request) {
