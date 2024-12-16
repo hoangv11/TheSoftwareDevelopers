@@ -42,13 +42,17 @@ const SignIn = () => {
                     <input name="password" type="password" className="form-control" />
                   </Form.Group>
                   <Button type="submit" className="mt-3">
-                    Signin
+                    Sign In
                   </Button>
                 </Form>
               </Card.Body>
               <Card.Footer>
                 Don&apos;t have an account?
+                {' '}
                 <a href="/auth/signup">Sign up</a>
+                <div className="mt-2">
+                  <a href="/auth/forgot-password">Forgot Password?</a>
+                </div>
               </Card.Footer>
             </Card>
           </Col>
