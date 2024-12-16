@@ -20,12 +20,12 @@ const SignUp = () => {
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [emailTaken, setEmailTaken] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isValidEmail, setIsValidEmail] = useState(true);  // Track email validity
+  const [isValidEmail, setIsValidEmail] = useState(true);
   const [verificationCodeSent, setVerificationCodeSent] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
   const [isVerificationValid, setIsVerificationValid] = useState(true);
   const [sentVerificationCode, setSentVerificationCode] = useState<number | null>(null);
-  const [formData, setFormData] = useState<SignUpForm | null>(null);  // State to store form data
+  const [formData, setFormData] = useState<SignUpForm | null>(null);
 
   const router = useRouter();
 
@@ -67,10 +67,10 @@ const SignUp = () => {
     const isEmailValid = value.endsWith('@hawaii.edu');
 
     if (!isEmailValid) {
-      setIsValidEmail(false);  // Set invalid email
+      setIsValidEmail(false);
       setError('email', { type: 'manual', message: 'Email must end with @hawaii.edu.' });
     } else {
-      setIsValidEmail(true);  // Set valid email
+      setIsValidEmail(true);
       clearErrors('email');
       await checkEmailTaken(value);
     }
@@ -107,7 +107,7 @@ const SignUp = () => {
   };
 
   const onSubmit = async (data: SignUpForm) => {
-    if (emailTaken || !isValidEmail) {  // Prevent submission if email is invalid or taken
+    if (emailTaken || !isValidEmail) {
       return;
     }
 
@@ -136,7 +136,7 @@ const SignUp = () => {
       await signIn('credentials', { callbackUrl: '/editprofile', ...formData });
 
       setIsSubmitting(false);
-      router.push('/editprofile');  // Navigate after successful sign-up
+      router.push('/editprofile'); // Navigate after successful sign-up
     } else {
       setIsVerificationValid(false);
     }
@@ -223,7 +223,7 @@ const SignUp = () => {
                 id="verificationCode"
                 className={`${styles.input} ${!isVerificationValid ? styles.invalid : ''}`}
                 value={enteredCode}
-                onChange={(e) => setEnteredCode(e.target.value)}  // Set entered code
+                onChange={(e) => setEnteredCode(e.target.value)} // Set entered code
                 required
               />
               {!isVerificationValid && <p className={styles.error}>Invalid code entered.</p>}
@@ -233,7 +233,7 @@ const SignUp = () => {
           <button
             type="submit"
             className={styles.button}
-            disabled={isSubmitting || !isValidEmail}  // Disable button if email is invalid
+            disabled={isSubmitting || !isValidEmail} // Disable button if email is invalid
           >
             {isSubmitting ? 'Sending Code...' : 'Sign Up'}
           </button>
@@ -254,7 +254,8 @@ const SignUp = () => {
       {/* Centered account prompt */}
       <div className={styles.accountPromptWrapper}>
         <p>
-          Already have an account? <Link href="/login">Log in</Link>
+          Already have an account?&nbsp;
+          <Link href="/auth/signin">Log in</Link>
         </p>
       </div>
     </div>
