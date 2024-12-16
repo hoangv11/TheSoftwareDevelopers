@@ -127,3 +127,9 @@
   display: flex;
   flex-direction: column;
 }
+
+.text-secondary {
+  font-size: 14px;
+  white-space: normal;
+  word-break: break-word;
+}

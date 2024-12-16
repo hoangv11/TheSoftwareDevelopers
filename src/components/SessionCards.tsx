@@ -101,7 +101,7 @@ const SessionCard = ({
                 <Card.Title className="text-primary text-start">
                   {session.title}
                 </Card.Title>
-                <Card.Text className="text-secondary text-start mb-3 pt-3">
+                <Card.Text className="text-secondary">
                   {session.description}
                 </Card.Text>
 

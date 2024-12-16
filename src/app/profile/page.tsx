@@ -29,9 +29,9 @@ const MyProfile = async () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg overflow-hidden">
-        <div className="profile-header flex flex-col items-center p-6">
+    <div className="flex items-center justify-center bg-gray-100 p-4 my-8">
+      <div className="bg-white rounded-lg overflow-hidden w-50 mx-auto px-6 border-black-500">
+        <div className="profile-header flex flex-col items-center p-6 border-b">
           {profiles
             .filter(
               (profile) => profile.userId === parseInt(userSession.user?.id, 10),
@@ -45,21 +45,30 @@ const MyProfile = async () => {
               />
             ))}
 
-          <div className="profile-info text-center">
+          <div className="profile-info">
             <h1 className="text-2xl font-bold mb-2">
+              Name:
+              {' '}
               {`${userProfile.firstName} ${userProfile.lastName}`}
             </h1>
-            <p className="text-gray-600 mb-2">{userProfile.major}</p>
-            <p className="text-gray-500 mb-4">{userProfile.bio}</p>
-
-            <div className="points-container flex items-center justify-center mb-4">
+            <p className="text-gray-600 mb-2">
+              Major:
+              {' '}
+              {userProfile.major}
+            </p>
+            <p className="text-gray-500 mb-2">
+              Bio:
+              {' '}
+              {userProfile.bio}
+            </p>
+            <p className="flex items-center justify-center mb-4">
               <StarIcon size={20} className="text-yellow-500 mr-2" />
-              <span className="font-semibold">
+              <span className="font-semibold px-2">
                 {userProfile.points}
                 {' '}
                 Points
               </span>
-            </div>
+            </p>
 
             <Link href="/editprofile" className="block">
               <Button className="edit-profile-button">Edit Profile</Button>
