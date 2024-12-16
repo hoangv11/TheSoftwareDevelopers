@@ -20,7 +20,7 @@ const SignUp = () => {
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [emailTaken, setEmailTaken] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [isValidEmail, setIsValidEmail] = useState(true);  // Track email validity
   const [verificationCodeSent, setVerificationCodeSent] = useState(false);
   const [enteredCode, setEnteredCode] = useState('');
   const [isVerificationValid, setIsVerificationValid] = useState(true);
@@ -67,10 +67,10 @@ const SignUp = () => {
     const isEmailValid = value.endsWith('@hawaii.edu');
 
     if (!isEmailValid) {
-      setIsValidEmail(false);
+      setIsValidEmail(false);  // Set invalid email
       setError('email', { type: 'manual', message: 'Email must end with @hawaii.edu.' });
     } else {
-      setIsValidEmail(true);
+      setIsValidEmail(true);  // Set valid email
       clearErrors('email');
       await checkEmailTaken(value);
     }
@@ -107,8 +107,7 @@ const SignUp = () => {
   };
 
   const onSubmit = async (data: SignUpForm) => {
-    if (emailTaken) {
-      setError('email', { type: 'manual', message: 'Email is already taken.' });
+    if (emailTaken || !isValidEmail) {  // Prevent submission if email is invalid or taken
       return;
     }
 
@@ -121,28 +120,16 @@ const SignUp = () => {
     await sendVerificationCode(data.email);
 
     // After code is sent, proceed to the next step where the user enters the verification code
-    console.log('current data');
-    console.log(data.email);
-    console.log(data.password);
-    console.log(data.confirmPassword);
-
-    // Set the verification code sent state
     setVerificationCodeSent(true);
-
-    // Pass the data to handleVerifyCode and perform the verification check
     setIsSubmitting(false);
   };
 
-  // Now handleVerifyCode accepts data to create the user after successful verification
   const handleVerifyCode = async () => {
     if (Number(enteredCode) === sentVerificationCode && formData) {
       setIsSubmitting(true);
       console.log('Verification successful, creating user...');
-      console.log(formData.email);
-      console.log(formData.password);
-      console.log(formData.confirmPassword);
 
-      // Create user after successful verification using the correct email and password
+      // Create user after successful verification
       await createUser(formData);
       console.log('User created successfully');
 
@@ -246,7 +233,7 @@ const SignUp = () => {
           <button
             type="submit"
             className={styles.button}
-            disabled={isSubmitting}
+            disabled={isSubmitting || !isValidEmail}  // Disable button if email is invalid
           >
             {isSubmitting ? 'Sending Code...' : 'Sign Up'}
           </button>
