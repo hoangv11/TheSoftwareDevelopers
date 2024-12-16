@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import { createUser, checkIfEmailExists } from '@/lib/dbActions';
+import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 
 type SignUpForm = {
@@ -19,7 +20,14 @@ const SignUp = () => {
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [emailTaken, setEmailTaken] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [isValidEmail, setIsValidEmail] = useState(true);  // Track email validity
+  const [verificationCodeSent, setVerificationCodeSent] = useState(false);
+  const [enteredCode, setEnteredCode] = useState('');
+  const [isVerificationValid, setIsVerificationValid] = useState(true);
+  const [sentVerificationCode, setSentVerificationCode] = useState<number | null>(null);
+  const [formData, setFormData] = useState<SignUpForm | null>(null);  // State to store form data
+
+  const router = useRouter();
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().required('Email is required').email('Email is invalid'),
@@ -43,7 +51,6 @@ const SignUp = () => {
     resolver: yupResolver(validationSchema),
   });
 
-  // Function to check if email is already taken
   const checkEmailTaken = async (email: string) => {
     const exists = await checkIfEmailExists(email);
     if (exists) {
@@ -55,27 +62,18 @@ const SignUp = () => {
     }
   };
 
-  // Validate email when the user finishes typing (onBlur)
   const validateEmail = async (value: string) => {
     setValue('email', value);
     const isEmailValid = value.endsWith('@hawaii.edu');
 
     if (!isEmailValid) {
-      setIsValidEmail(false);
+      setIsValidEmail(false);  // Set invalid email
       setError('email', { type: 'manual', message: 'Email must end with @hawaii.edu.' });
     } else {
-      setIsValidEmail(true);
+      setIsValidEmail(true);  // Set valid email
       clearErrors('email');
       await checkEmailTaken(value);
     }
-  };
-
-  // Handle when the user changes the email field
-  const handleEmailChange = async (value: string) => {
-    setEmailTaken(false);
-    setIsValidEmail(true);
-    clearErrors('email');
-    await checkEmailTaken(value);
   };
 
   const handlePasswordBlur = (confirmPassword: string) => {
@@ -85,18 +83,63 @@ const SignUp = () => {
     }
   };
 
+  // Send the verification code
+  const sendVerificationCode = async (email: string) => {
+    try {
+      const response = await fetch('/api/auth/sendVerificationCode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const result = await response.json();
+
+      if (result.error) {
+        alert(result.error);
+        return;
+      }
+
+      setVerificationCodeSent(true);
+      setSentVerificationCode(result.code);
+    } catch (error) {
+      console.error('Error sending verification code:', error);
+    }
+  };
+
   const onSubmit = async (data: SignUpForm) => {
-    if (emailTaken) {
-      setError('email', { type: 'manual', message: 'Email is already taken.' });
+    if (emailTaken || !isValidEmail) {  // Prevent submission if email is invalid or taken
       return;
     }
 
     setIsSubmitting(true);
 
-    await createUser(data);
-    await signIn('credentials', { callbackUrl: '/editprofile', ...data });
+    // Save form data in state to use later
+    setFormData(data);
 
+    // Send verification code first
+    await sendVerificationCode(data.email);
+
+    // After code is sent, proceed to the next step where the user enters the verification code
+    setVerificationCodeSent(true);
     setIsSubmitting(false);
+  };
+
+  const handleVerifyCode = async () => {
+    if (Number(enteredCode) === sentVerificationCode && formData) {
+      setIsSubmitting(true);
+      console.log('Verification successful, creating user...');
+
+      // Create user after successful verification
+      await createUser(formData);
+      console.log('User created successfully');
+
+      await signIn('credentials', { callbackUrl: '/editprofile', ...formData });
+
+      setIsSubmitting(false);
+      router.push('/editprofile');  // Navigate after successful sign-up
+    } else {
+      setIsVerificationValid(false);
+    }
   };
 
   return (
@@ -111,7 +154,6 @@ const SignUp = () => {
         <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           {/* Email Field */}
           <div className={styles.inputGroup}>
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
             <label htmlFor="email" className={styles.label}>
               Email
             </label>
@@ -121,7 +163,6 @@ const SignUp = () => {
               className={`${styles.input} ${(emailTaken || !isValidEmail) ? styles.invalid : ''}`}
               {...register('email', { required: 'Email is required' })}
               onBlur={(e) => validateEmail(e.target.value)}
-              onChange={(e) => handleEmailChange(e.target.value)}
               required
             />
             {(emailTaken || !isValidEmail) && (
@@ -129,7 +170,6 @@ const SignUp = () => {
                 {emailTaken ? 'Email is already taken.' : 'Email must end with @hawaii.edu.'}
               </p>
             )}
-            {/* Only show react-hook-form error if there's no manual email error */}
             {!emailTaken && isValidEmail && errors.email && (
               <p className={styles.error}>{errors.email.message}</p>
             )}
@@ -137,7 +177,6 @@ const SignUp = () => {
 
           {/* Password Field */}
           <div className={styles.inputGroup}>
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
             <label htmlFor="password" className={styles.label}>
               Password
             </label>
@@ -155,7 +194,6 @@ const SignUp = () => {
 
           {/* Confirm Password Field */}
           <div className={styles.inputGroup}>
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
             <label htmlFor="confirmPassword" className={styles.label}>
               Recheck Password
             </label>
@@ -175,19 +213,48 @@ const SignUp = () => {
             )}
           </div>
 
-          <button type="submit" className={styles.button} disabled={isSubmitting}>
-            {isSubmitting ? 'Signing Up...' : 'Sign Up'}
+          {verificationCodeSent && (
+            <div className={styles.inputGroup}>
+              <label htmlFor="verificationCode" className={styles.label}>
+                Enter Verification Code
+              </label>
+              <input
+                type="text"
+                id="verificationCode"
+                className={`${styles.input} ${!isVerificationValid ? styles.invalid : ''}`}
+                value={enteredCode}
+                onChange={(e) => setEnteredCode(e.target.value)}  // Set entered code
+                required
+              />
+              {!isVerificationValid && <p className={styles.error}>Invalid code entered.</p>}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className={styles.button}
+            disabled={isSubmitting || !isValidEmail}  // Disable button if email is invalid
+          >
+            {isSubmitting ? 'Sending Code...' : 'Sign Up'}
           </button>
+
+          {verificationCodeSent && (
+            <button
+              type="button"
+              className={styles.button}
+              onClick={handleVerifyCode}
+              disabled={isSubmitting}
+            >
+              Verify Code and Create Account
+            </button>
+          )}
         </form>
       </div>
 
       {/* Centered account prompt */}
       <div className={styles.accountPromptWrapper}>
         <p>
-          Already have an account?
-          <Link href="/auth/signin" className={styles.signInLink}>
-            Sign In
-          </Link>
+          Already have an account? <Link href="/login">Log in</Link>
         </p>
       </div>
     </div>

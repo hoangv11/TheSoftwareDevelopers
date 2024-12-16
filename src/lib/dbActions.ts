@@ -4,7 +4,6 @@ import { Stuff, Condition, Profile, StudySession } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { redirect } from 'next/navigation';
 import { prisma } from './prisma';
-
 /**
  * Adds a new stuff to the database.
  * @param stuff, an object with the following properties: name, quantity, owner, condition.
@@ -76,7 +75,16 @@ export async function createUser(credentials: {
   email: string;
   password: string;
 }) {
-  // console.log(`createUser data: ${JSON.stringify(credentials, null, 2)}`);
+  // Check if the email already exists
+  const existingUser = await prisma.user.findUnique({
+    where: { email: credentials.email },
+  });
+
+  if (existingUser) {
+    throw new Error('Email is already in use');
+  }
+
+  // If email doesn't exist, proceed with creating the user
   const password = await hash(credentials.password, 10);
   await prisma.user.create({
     data: {
