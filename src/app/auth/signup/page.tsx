@@ -1,223 +1,84 @@
+// src/app/auth/signup/page.tsx
+
 'use client';
 
-import React, { useState } from 'react';
-import styles from '@/styles/signup.module.css';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
-import { createUser, checkIfEmailExists, sendVerificationCode } from '@/lib/dbActions';
-import { signIn } from 'next-auth/react';
+import { useState } from 'react';
 
-type SignUpForm = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
-
-const SignUp = () => {
-  const [passwordsMatch, setPasswordsMatch] = useState(true);
-  const [emailTaken, setEmailTaken] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isValidEmail, setIsValidEmail] = useState(true);
-  const [verificationCodeSent, setVerificationCodeSent] = useState(false);
+const Signup = () => {
+  const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
-  const [inputCode, setInputCode] = useState('');
-  const [isCodeValid, setIsCodeValid] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
-  const validationSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required').email('Email is invalid'),
-    password: Yup.string()
-      .required('Password is required')
-      .min(6, 'Password must be at least 6 characters')
-      .max(40, 'Password must not exceed 40 characters'),
-    confirmPassword: Yup.string()
-      .required('Confirm Password is required')
-      .oneOf([Yup.ref('password'), ''], 'Passwords must match'),
-  });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage('');
+    setError('');
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    setError,
-    clearErrors,
-  } = useForm<SignUpForm>({
-    resolver: yupResolver(validationSchema),
-  });
+    try {
+      // Send email to backend to request verification code
+      const res = await fetch('/api/auth/sendVerificationCode', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
 
-  const checkEmailTaken = async (email: string) => {
-    const exists = await checkIfEmailExists(email);
-    if (exists) {
-      setEmailTaken(true);
-      setError('email', { type: 'manual', message: 'Email is already taken.' });
-    } else {
-      setEmailTaken(false);
-      clearErrors('email');
+      const data = await res.json();
+      if (res.ok) {
+        setMessage('Verification code sent to your email!');
+        console.log('Verification code sent:', data.code); // Check the code sent by the backend
+      } else {
+        setError(data.error || 'Something went wrong');
+      }
+    } catch (err) {
+      setError('Error while sending the verification email.');
+      console.error('Error:', err);
     }
   };
 
-  const validateEmail = async (value: string) => {
-    setValue('email', value);
-    const isEmailValid = value.endsWith('@hawaii.edu');
-
-    if (!isEmailValid) {
-      setIsValidEmail(false);
-      setError('email', { type: 'manual', message: 'Email must end with @hawaii.edu.' });
-    } else {
-      setIsValidEmail(true);
-      clearErrors('email');
-      await checkEmailTaken(value);
-    }
-  };
-
-  const handleEmailChange = async (value: string) => {
-    setEmailTaken(false);
-    setIsValidEmail(true);
-    clearErrors('email');
-    await validateEmail(value);
-  };
-
-  const handlePasswordBlur = (confirmPassword: string) => {
-    const passwordField = document.getElementById('password') as HTMLInputElement;
-    if (passwordField) {
-      setPasswordsMatch(passwordField.value === confirmPassword);
-    }
-  };
-
-  const onSubmit = async (data: SignUpForm) => {
-    setIsSubmitting(true); // Start submission
-    if (emailTaken) {
-      setError('email', { type: 'manual', message: 'Email is already taken.' });
-      setIsSubmitting(false); // Stop submission
-      return;
-    }
-
-    // Send the verification code to the user's email
-    const verificationCode = await sendVerificationCode(data.email);
-    setVerificationCode(verificationCode);
-    setVerificationCodeSent(true);
-
-    setIsSubmitting(false); // Stop submission after code is sent
-  };
-
-  const handleVerificationCodeSubmit = async () => {
-    if (inputCode === verificationCode) {
-      setIsCodeValid(true);
-      // Create the user account after successful code verification
-      await createUser({ email: verificationCode, password: 'password' });
-      await signIn('credentials', { callbackUrl: '/editprofile' });
-    } else {
-      setIsCodeValid(false);
-    }
+  const handleVerifyCode = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Verification code entered:', verificationCode);
+    // Here you can add logic to verify the entered code with the backend if necessary
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.formWrapper}>
-        <h1 className={styles.title}>Sign Up</h1>
+    <div>
+      <h1>Signup</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Send Verification Code</button>
+      </form>
 
-        <p className={styles.descriptionCentered}>
-          Sign up using your @hawaii.edu email
-        </p>
+      {message && <p>{message}</p>}
+      {error && <p>{error}</p>}
 
-        {!verificationCodeSent ? (
-          <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-            {/* Email Field */}
-            <div className={styles.inputGroup}>
-              <label htmlFor="email" className={styles.label}>
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                className={`${styles.input} ${(emailTaken || !isValidEmail) ? styles.invalid : ''}`}
-                {...register('email', { required: 'Email is required' })}
-                onBlur={(e) => validateEmail(e.target.value)}
-                onChange={(e) => handleEmailChange(e.target.value)} // Ensure this matches the function name
-                required
-              />
-              {(emailTaken || !isValidEmail) && (
-                <p className={styles.error}>
-                  {emailTaken ? 'Email is already taken.' : 'Email must end with @hawaii.edu.'}
-                </p>
-              )}
-              {!emailTaken && isValidEmail && errors.email && (
-                <p className={styles.error}>{errors.email.message}</p>
-              )}
-            </div>
-
-            {/* Password Field */}
-            <div className={styles.inputGroup}>
-              <label htmlFor="password" className={styles.label}>
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                className={`${styles.input} ${errors.password ? styles.invalid : ''}`}
-                {...register('password')}
-                required
-              />
-              {errors.password && (
-                <p className={styles.error}>{errors.password.message}</p>
-              )}
-            </div>
-
-            {/* Confirm Password Field */}
-            <div className={styles.inputGroup}>
-              <label htmlFor="confirmPassword" className={styles.label}>
-                Recheck Password
-              </label>
-              <input
-                type="password"
-                id="confirmPassword"
-                className={`${styles.input} ${(!passwordsMatch && errors.confirmPassword) ? styles.invalid : ''}`}
-                {...register('confirmPassword')}
-                onBlur={(e) => handlePasswordBlur(e.target.value)}
-                required
-              />
-              {errors.confirmPassword && (
-                <p className={styles.error}>{errors.confirmPassword.message}</p>
-              )}
-              {!passwordsMatch && !errors.confirmPassword && (
-                <p className={styles.error}>Passwords must match.</p>
-              )}
-            </div>
-
-            <button type="submit" className={styles.button} disabled={isSubmitting}>
-              {isSubmitting ? 'Signing Up...' : 'Sign Up'}
-            </button>
-          </form>
-        ) : (
-          <div className={styles.verificationWrapper}>
-            <h2>Enter the verification code sent to your email</h2>
-            <input
-              type="text"
-              className={styles.input}
-              value={inputCode}
-              onChange={(e) => setInputCode(e.target.value)}
-              placeholder="Verification Code"
-            />
-            <button onClick={handleVerificationCodeSubmit} className={styles.button}>
-              Verify Code
-            </button>
-            {!isCodeValid && <p className={styles.error}>Invalid verification code.</p>}
-          </div>
-        )}
-      </div>
-
-      <div className={styles.accountPromptWrapper}>
-        <p>
-          Already have an account?
-          <Link href="/auth/signin" className={styles.signInLink}>
-            Sign In
-          </Link>
-        </p>
-      </div>
+      <form onSubmit={handleVerifyCode}>
+        <div>
+          <label htmlFor="code">Enter Verification Code:</label>
+          <input
+            type="text"
+            id="code"
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Verify Code</button>
+      </form>
     </div>
   );
 };
 
-export default SignUp;
+export default Signup;
