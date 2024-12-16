@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import React from 'react';
 import '../../styles/profilepage.css';
-import { Star as StarIcon, GraduationCap, Clock } from 'lucide-react';
+import { Star as StarIcon } from 'lucide-react';
 import authOptions from '@/lib/auth';
 import Link from 'next/link';
 import { Button, Image } from 'react-bootstrap';
@@ -29,106 +29,44 @@ const MyProfile = async () => {
   }
 
   return (
-    <div className="container">
-      {/* Profile Header */}
-      <div className="profile-header">
-        {profiles
-          .filter(
-            (profile) => profile.userId === parseInt(userSession.user?.id, 10),
-          )
-          .map((profile) => (
-            <Image
-              key={profile.userId}
-              src={profile.profilePictureUrl || ''}
-              roundedCircle
-              className="profile-picture"
-            />
-          ))}
-        <div className="profile-info">
-          <h1 className="profile-name">{`${userProfile.firstName} ${userProfile.lastName}`}</h1>
-          <p className="profile-major">{userProfile.major}</p>
-          <p className="profile-bio">{userProfile.bio}</p>
-          <div className="points-container">
-            <StarIcon size={20} className="star-icon" />
-            <span>{userProfile.points}</span>
-          </div>
-          <Link href="/editprofile">
-            <Button className="edit-profile-button">Edit Profile</Button>
-          </Link>
-        </div>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="profile-header flex flex-col items-center p-6">
+          {profiles
+            .filter(
+              (profile) => profile.userId === parseInt(userSession.user?.id, 10),
+            )
+            .map((profile) => (
+              <Image
+                key={profile.userId}
+                src={profile.profilePictureUrl || ''}
+                roundedCircle
+                className="profile-picture w-32 h-32 object-cover mb-4"
+              />
+            ))}
 
-      {/* Courses Section */}
-      <div className="courses-container">
-        {/* Student Courses */}
-        <div className="course-card">
-          <h2 className="course-title">
-            <GraduationCap className="course-icon" />
-            Student Courses
-          </h2>
-          <div className="progress-container">
-            <div className="progress-label">
-              <span>ICS 111 Introduction to Computer Science</span>
-              <span>75%</span>
+          <div className="profile-info text-center">
+            <h1 className="text-2xl font-bold mb-2">
+              {`${userProfile.firstName} ${userProfile.lastName}`}
+            </h1>
+            <p className="text-gray-600 mb-2">{userProfile.major}</p>
+            <p className="text-gray-500 mb-4">{userProfile.bio}</p>
+
+            <div className="points-container flex items-center justify-center mb-4">
+              <StarIcon size={20} className="text-yellow-500 mr-2" />
+              <span className="font-semibold">
+                {userProfile.points}
+                {' '}
+                Points
+              </span>
             </div>
-            <div className="progress-bar">
-              <div className="progress-bar-fill" style={{ width: '75%' }} />
-            </div>
-          </div>
-          <div className="progress-container">
-            <div className="progress-label">
-              <span>React Fundamentals</span>
-              <span>45%</span>
-            </div>
-            <div className="progress-bar">
-              <div className="progress-bar-fill" style={{ width: '45%' }} />
-            </div>
-          </div>
-          <div className="progress-container">
-            <div className="progress-label">
-              <span>Database Design</span>
-              <span>60%</span>
-            </div>
-            <div className="progress-bar">
-              <div className="progress-bar-fill" style={{ width: '60%' }} />
-            </div>
+
+            <Link href="/editprofile" className="block">
+              <Button className="edit-profile-button">Edit Profile</Button>
+            </Link>
           </div>
         </div>
       </div>
-
-      {/* Session History */}
-      <table className="session-history-table">
-        <thead>
-          <tr>
-            <th className="table-header">
-              <Clock className="clock-icon" />
-              Session History
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="table-row">
-            <td className="table-cell">
-              <div className="session-row">
-                <span>2024-03-15</span>
-                <span>React Fundamentals</span>
-                <span>2h 15m</span>
-                <span className="status-completed">Completed</span>
-              </div>
-            </td>
-          </tr>
-          <tr className="table-row">
-            <td className="table-cell">
-              <div className="session-row">
-                <span>2024-03-10</span>
-                <span>Database Design</span>
-                <span>1h 45m</span>
-                <span className="status-in-progress">In Progress</span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   );
 };
