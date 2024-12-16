@@ -2,15 +2,11 @@ import nodemailer from 'nodemailer';
 
 export async function POST(req: Request) {
   try {
-    console.log('Received request at /api/auth/sendVerificationCode');
-
     const body = await req.json();
     const { email } = body;
-    console.log('Received email:', email);
 
     // Validate email
     if (!email) {
-      console.log('Error: Email is missing');
       return new Response(
         JSON.stringify({ error: 'Email is required' }),
         { status: 400 },
@@ -19,7 +15,6 @@ export async function POST(req: Request) {
 
     // Generate a 6-digit random verification code
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
-    console.log('Generated verification code:', verificationCode);
 
     // Create the Nodemailer transporter
     const transporter = nodemailer.createTransport({
