@@ -1,64 +1,89 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
+import { useState } from 'react';
+import styles from '@/styles/signin.module.css';
 
-/** The sign in page. */
 const SignIn = () => {
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const target = e.target as typeof e.target & {
-      email: { value: string };
-      password: { value: string };
-    };
-    const email = target.email.value;
-    const password = target.password.value;
+
+    if (!email || !password) {
+      setError('Please enter both email and password.');
+      return;
+    }
+
     const result = await signIn('credentials', {
       callbackUrl: '/userHome',
       email,
       password,
     });
 
+    console.log(result); // Log the result to see the structure of the response
+
     if (result?.error) {
-      console.error('Sign in failed: ', result.error);
+      if (result.error === 'Invalid credentials') {
+        setError('Incorrect email or password. Please try again.');
+      } else {
+        setError('Sign in failed. Please try again later.');
+      }
+    } else {
+      setMessage('Sign in successful!');
     }
   };
 
   return (
-    <main>
-      <Container>
-        <Row className="justify-content-center">
-          <Col xs={5}>
-            <h1 className="text-center">Sign In</h1>
-            <Card>
-              <Card.Body>
-                <Form method="post" onSubmit={handleSubmit}>
-                  <Form.Group controlId="formBasicEmail">
-                    <Form.Label>Email</Form.Label>
-                    <input name="email" type="text" className="form-control" />
-                  </Form.Group>
-                  <Form.Group>
-                    <Form.Label>Password</Form.Label>
-                    <input name="password" type="password" className="form-control" />
-                  </Form.Group>
-                  <Button type="submit" className="mt-3">
-                    Sign In
-                  </Button>
-                </Form>
-              </Card.Body>
-              <Card.Footer>
-                Don&apos;t have an account?
-                {' '}
-                <a href="/auth/signup">Sign up</a>
-                <div className="mt-2">
-                  <a href="/auth/forgot-password">Forgot Password?</a>
-                </div>
-              </Card.Footer>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    </main>
+    <div className={styles.container}>
+      <div className={styles.formContainer}>
+        <h1 className={styles.title}>Sign In</h1>
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <label htmlFor="email" className={styles.label}>
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className={styles.input}
+          />
+          <label htmlFor="password" className={styles.label}>
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className={styles.input}
+          />
+          <button type="submit" className={styles.submitBtn}>
+            Sign In
+          </button>
+        </form>
+
+        {message && <p className={styles.message}>{message}</p>}
+        {error && <p className={styles.error}>{error}</p>}
+
+        <div className={styles.accountPromptWrapper}>
+          <p>
+            Don&apos;t have an account?
+            {' '}
+            <a href="/auth/signup" className={`${styles.signInLink} ${styles.boldLink}`}>Sign up</a>
+          </p>
+          <p>
+            <a href="/auth/forgot-password" className={styles.forgotPassword}>Forgot Password?</a>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 
