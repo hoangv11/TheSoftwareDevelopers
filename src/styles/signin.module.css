@@ -21,41 +21,48 @@
 
 .title {
   text-align: center;
-  font-size: 1.8rem; 
-  margin-bottom: 15px;
-  font-weight: bold; 
-}
-
-.description {
-  text-align: center;
-  font-size: 1rem;
-  margin-top: 10px;
+  font-size: 2rem; 
   margin-bottom: 20px;
-  color: #555;
+  font-weight: bold;
 }
 
 .form {
   display: flex;
   flex-direction: column;
   width: 100%;
+  gap: 12px; 
 }
 
+/* Label styling */
+.label {
+  display: block;
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+/* Input field styling */
 .input {
   width: 100%;
-  padding: 15px;
-  margin-top: 10px;
+  padding: 12px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 1rem;
+  margin-bottom: 15px; 
 }
 
- /* Buttons */
- .submitBtn {
+.input:focus {
+  outline: none;
+  border-color: #0070f3; 
+  box-shadow: 0 0 5px rgba(0, 112, 243, 0.3);
+}
+
+.submitBtn {
   width: 100%;
   padding: 15px;
-  background-color: #0070f3; 
+  background-color: #0070f3;
   color: white;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: bold;
   border: none;
   border-radius: 8px;
@@ -66,12 +73,12 @@
 }
 
 .submitBtn:hover {
-  background-color: #005bb5; 
-  transform: translateY(-2px); 
+  background-color: #005bb5;
+  transform: translateY(-2px);
 }
 
 .submitBtn:active {
-  transform: translateY(0); 
+  transform: translateY(0);
 }
 
 .message {
@@ -93,11 +100,10 @@
   font-size: 0.9rem;
   margin-top: 20px;
   color: #666666;
-  text-align: center;
 }
 
 .boldLink {
-  font-weight: bold; 
+  font-weight: bold;
 }
 
 .signInLink {
@@ -106,5 +112,15 @@
 }
 
 .signInLink:hover {
+  text-decoration: underline;
+}
+
+.forgotPassword {
+  color: #0070f3;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.forgotPassword:hover {
   text-decoration: underline;
 }

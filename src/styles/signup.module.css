@@ -1,80 +1,124 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f8f9fa; 
+  padding: 20px;
+}
+
+/* Form wrapper */
+.formWrapper {
+  width: 100%;
+  max-width: 400px;
+  padding: 25px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  text-align: center; 
+}
+
+/* Title styling */
+.title {
+  font-size: 1.8rem;
+  color: #333; 
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+/* Description styling */
+.descriptionCentered {
+  font-size: 1rem;
+  color: #666; 
+  margin: 10px 0 20px;
+}
+
+/* Input group wrapper */
+.inputGroup {
+  margin-bottom: 20px;
+  text-align: left; 
+}
+
+/* Label styling */
+.label {
+  display: block;
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+/* Input field styling */
+.input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #0070f3;
+  box-shadow: 0 0 5px rgba(0, 112, 243, 0.3);
+}
+
+/* Invalid input state */
+.invalid {
+  border-color: red;
+}
+
+/* Error message styling */
+.error {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+ /* Buttons */
+ .button {
+  width: 100%;
+  padding: 12px;
+  background-color: #0070f3; 
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.button:hover {
+  background-color: #005bb5; 
+  transform: translateY(-2px); 
+}
+
+.button:active {
+  transform: translateY(0); 
+}
+
+/* Centered account prompt wrapper */
+.accountPromptWrapper {
+  font-size: 0.9rem;
+  margin-top: 20px; 
+  color: #666666;
+  text-align: center;
+}
+
+/* Log in link styling */
+.logIn {
+  font-size: 0.85rem; 
+  color: #0070f3;
+  margin-top: 10px; 
+  font-weight: bold; 
+  text-decoration: none;
   
-  .formWrapper {
-    width: 100%;
-    max-width: 400px;  /* Set max width for the form */
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .accountPromptWrapper {
-    text-align: center;
-    font-size: 0.85rem;  /* Smaller text */
-    margin-top: 20px;    /* Space between the form and the prompt */
-  }
-  
-  .signInLink {
-    color: #0070f3;
-    text-decoration: none;
-    margin-left: 5px; /* Adds space between the question mark and the link */
-  }
-  
-  .signInLink:hover {
-    text-decoration: underline;
-  }
-  
-  .title {
-    text-align: center;
-  }
-  
-  .inputGroup {
-    margin-bottom: 15px;
-  }
-  
-  .input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .invalid {
-    border-color: red;
-  }
-  
-  .error {
-    color: red;
-    font-size: 0.8rem;
-  }
-  
-  .button {
-    width: 100%;
-    padding: 12px;
-    background-color: #0070f3;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .button:hover {
-    background-color: #005bb5;
-  }
-  
-  /* Center the description text */
-  .descriptionCentered {
-    text-align: center;
-    font-size: 1rem;
-    margin-top: 10px;
-    margin-bottom: 20px;
-  }
-  
+}
+
+.logIn:hover {
+  text-decoration: underline;
+}
+
+
