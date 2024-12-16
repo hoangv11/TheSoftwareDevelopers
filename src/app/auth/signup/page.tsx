@@ -254,8 +254,7 @@ const SignUp = () => {
       {/* Centered account prompt */}
       <div className={styles.accountPromptWrapper}>
         <p>
-          Already have an account?
-          <Link href="/login">Log in</Link>
+          Already have an account? <Link href="/login">Log in</Link>
         </p>
       </div>
     </div>
